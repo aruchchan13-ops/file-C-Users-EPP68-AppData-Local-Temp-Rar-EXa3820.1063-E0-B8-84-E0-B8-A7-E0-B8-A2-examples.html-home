@@ -1,0 +1,1232 @@
+<title>ครูกระดาน</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=Sriracha&display=swap">
+<style>
+/* Layout: a classroom wall. The board dominates the left (whiteboard in light, chalkboard in dark);
+   a notebook-like side panel holds the conversation, checks and quizzes. */
+:root{
+  --bg:#eceee9; --surface:#ffffff; --surface-2:#f3f5f1; --fg:#1b221e; --muted:#5b665f; --line:#d5dad2;
+  --accent:#1f6b57; --accent-soft:#dfeee7; --accent-fg:#ffffff;
+  --frame:#c3c9c0; --frame-hi:#dfe3dc;
+  --board:#fbfbf7; --board-smudge:rgba(40,70,60,.035); --board-muted:#7d8a83;
+  --ink:#1f2a33; --ink-b:#1c54bf; --ink-r:#c2352a; --ink-g:#17784a; --ink-y:#ad6800;
+  --ok:#17784a; --ok-soft:#e2f2e7; --bad:#c2352a; --bad-soft:#f8e3df;
+  --shadow:0 1px 2px rgba(20,30,25,.06),0 10px 28px rgba(20,30,25,.07);
+  --f-ui:"Anuphan","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;
+  --f-board:"Sriracha","Anuphan","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111613; --surface:#181e1a; --surface-2:#1f2622; --fg:#e6ebe5; --muted:#9aa69e; --line:#2c3530;
+  --accent:#6fc6a6; --accent-soft:#1d3029; --accent-fg:#0b1913;
+  --frame:#5d4530; --frame-hi:#77593d;
+  --board:#22342b; --board-smudge:rgba(255,255,255,.035); --board-muted:#9db3a6;
+  --ink:#f1efe4; --ink-b:#93c8ff; --ink-r:#ff9d8c; --ink-g:#a9e4a3; --ink-y:#ffd57a;
+  --ok:#7fd69a; --ok-soft:#1c3125; --bad:#ff9d8c; --bad-soft:#3a2220;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.3);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111613; --surface:#181e1a; --surface-2:#1f2622; --fg:#e6ebe5; --muted:#9aa69e; --line:#2c3530;
+  --accent:#6fc6a6; --accent-soft:#1d3029; --accent-fg:#0b1913;
+  --frame:#5d4530; --frame-hi:#77593d;
+  --board:#22342b; --board-smudge:rgba(255,255,255,.035); --board-muted:#9db3a6;
+  --ink:#f1efe4; --ink-b:#93c8ff; --ink-r:#ff9d8c; --ink-g:#a9e4a3; --ink-y:#ffd57a;
+  --ok:#7fd69a; --ok-soft:#1c3125; --bad:#ff9d8c; --bad-soft:#3a2220;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-ui);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.logo{font:400 27px/1 var(--f-board);color:var(--accent);letter-spacing:.01em}
+.tag{font-size:12px;color:var(--muted)}
+.modes{display:flex;gap:3px;padding:3px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow-x:auto;max-width:100%}
+.mode{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:500;color:var(--muted);white-space:nowrap}
+.mode[aria-selected="true"]{background:var(--accent);color:var(--accent-fg)}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sel{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23889' fill='none' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;border-radius:10px;padding:6px 28px 6px 10px;font-size:14px;max-width:100%}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 11px;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
+.icon-btn{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2)}
+.icon-btn:hover{border-color:var(--accent)}
+.icon-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.icon-btn:disabled{opacity:.45;cursor:default}
+
+/* ---------- main ---------- */
+.app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,400px);gap:16px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.board-wrap{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.board-frame{position:relative;flex:1;min-height:0;padding:10px;border-radius:14px;background:linear-gradient(160deg,var(--frame-hi),var(--frame));box-shadow:var(--shadow);display:flex;flex-direction:column}
+.board{position:relative;flex:1;min-height:0;overflow:auto;border-radius:6px;background:var(--board);background-image:radial-gradient(ellipse at 20% 30%,var(--board-smudge),transparent 55%),radial-gradient(ellipse at 80% 75%,var(--board-smudge),transparent 50%);color:var(--ink)}
+.board-inner{position:relative;min-height:100%;padding:18px clamp(16px,3vw,32px) 72px}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 16px;flex-wrap:wrap;font-family:var(--f-board);color:var(--board-muted);font-size:15px;margin-bottom:8px}
+.board-head .lt{color:var(--ink);font-size:17px;min-width:0}
+.ink-layer{position:absolute;inset:0 auto auto 0;pointer-events:none;touch-action:auto}
+.ink-layer.on{pointer-events:auto;touch-action:none;cursor:crosshair}
+.board-tools{position:absolute;right:20px;bottom:20px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 40px)}
+.board-tools .tool{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.board-tools .tool[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.swatch{width:22px;height:22px;border-radius:999px;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}
+.pen-set{display:flex;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 8px;box-shadow:var(--shadow)}
+
+/* board writing */
+.step{display:flex;flex-direction:column;gap:4px;padding-block:5px}
+.el{max-width:100%;min-width:0}
+.b-h{font:400 clamp(22px,2.3vw,30px)/1.3 var(--f-board);padding-bottom:2px;border-bottom:2px solid currentColor;align-self:flex-start;margin-top:6px}
+.b-w{font:400 clamp(18px,1.75vw,22px)/1.55 var(--f-board)}
+.b-m{font:400 clamp(20px,2.1vw,28px)/1.6 var(--f-board);text-align:center;overflow-x:auto}
+.b-n{font:400 clamp(16px,1.5vw,19px)/1.5 var(--f-board);padding-left:30px;position:relative}
+.b-n::before{content:"↳";position:absolute;left:6px;top:0}
+.b-box{align-self:flex-start;font:400 clamp(20px,2.1vw,27px)/1.5 var(--f-board);border:2.5px solid currentColor;border-radius:12px 16px 10px 14px;padding:4px 16px;margin-block:4px}
+.b-list{font:400 clamp(17px,1.7vw,21px)/1.5 var(--f-board);margin:0;padding-left:28px}
+.b-list li::marker{content:"– "}
+.b-tab{overflow-x:auto}
+.b-tab table{border-collapse:collapse;font:400 clamp(16px,1.6vw,20px)/1.4 var(--f-board)}
+.b-tab td,.b-tab th{border:1.5px solid currentColor;padding:4px 12px;text-align:left;font-weight:400}
+.b-tab th{border-bottom-width:3px}
+.b-div{border:0;border-top:2px dashed var(--board-muted);margin:14px 0 6px;opacity:.6}
+.b-svg{display:block;width:100%;max-width:560px;height:auto;margin-block:4px;overflow:visible}
+.b-svg text{font-family:var(--f-board);fill:currentColor;stroke:none}
+.c-k{color:var(--ink)}.c-b{color:var(--ink-b)}.c-r{color:var(--ink-r)}.c-g{color:var(--ink-g)}.c-y{color:var(--ink-y)}
+.sv-k{stroke:var(--ink)}.sv-b{stroke:var(--ink-b)}.sv-r{stroke:var(--ink-r)}.sv-g{stroke:var(--ink-g)}.sv-y{stroke:var(--ink-y)}
+.b-svg .tf-k{fill:var(--ink)}.b-svg .tf-b{fill:var(--ink-b)}.b-svg .tf-r{fill:var(--ink-r)}.b-svg .tf-g{fill:var(--ink-g)}.b-svg .tf-y{fill:var(--ink-y)}
+.b-svg .grid{stroke:var(--board-muted);opacity:.25;stroke-width:1}
+.b-svg .axis{stroke:var(--ink);stroke-width:1.6;opacity:.8}
+.b-svg .tick{fill:var(--board-muted);font-size:11px}
+
+/* mini TeX */
+.mx{font-family:var(--f-board)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .12em;line-height:1.15}
+.frac>.num{border-bottom:2px solid currentColor;padding:0 .2em .05em}
+.frac>.den{padding:.05em .2em 0}
+.sqrt{display:inline-flex;align-items:stretch;white-space:nowrap}
+.sqrt .rc{border-top:2px solid currentColor;padding:0 .15em;margin-left:-.06em}
+.mx sup,.mx sub,.root-i{font-size:.66em;line-height:0}
+.root-i{vertical-align:.9em;margin-right:-.35em}
+.ovl{border-top:2px solid currentColor}
+.vec{position:relative;display:inline-block}
+.vec::before{content:"→";position:absolute;left:0;right:0;top:-.75em;font-size:.7em;text-align:center}
+.boxed{border:2px solid currentColor;border-radius:4px;padding:0 .2em}
+
+/* write-on animation */
+.wr{animation:write var(--d,800ms) cubic-bezier(.45,.1,.55,1) both;animation-delay:var(--dl,0ms)}
+@keyframes write{from{clip-path:inset(-20% 100% -20% -4%)}to{clip-path:inset(-20% -4% -20% -4%)}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw var(--d,700ms) ease-out forwards;animation-delay:var(--dl,0ms)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .45s ease-out forwards;animation-delay:var(--dl,0ms)}
+@keyframes fade{to{opacity:1}}
+.step.done .wr,.step.done .fadein{animation:none;clip-path:none;opacity:1}
+.step.done .draw{animation:none;stroke-dashoffset:0}
+@media (prefers-reduced-motion: reduce){.wr,.fadein{animation:none!important;clip-path:none!important;opacity:1!important}.draw{animation:none!important;stroke-dashoffset:0!important}}
+
+/* player */
+.player{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.ctrls{display:flex;gap:6px;flex:none}
+.caption{flex:1;min-width:0}
+.caption .who{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.caption .say{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.speaking-dot{width:8px;height:8px;border-radius:99px;background:var(--accent);opacity:.25}
+.speaking .speaking-dot{opacity:1;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+
+/* side panel */
+.panel{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:14px;font-weight:600;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed{flex:1;min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:8px 12px;overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-fg);border-radius:14px 14px 4px 14px}
+.msg.tutor{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:14px 14px 14px 4px}
+.msg .thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.msg .thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.4)}
+.note{font-size:13px;color:var(--muted);text-align:center;padding:2px 8px}
+.note.err{color:var(--bad)}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:10px}
+.card .label{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase}
+.card .q{font:400 18px/1.45 var(--f-board);color:var(--fg)}
+.card h3{margin:0;font-size:16px}
+.card p{margin:0}
+.welcome ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.choices{display:grid;gap:6px}
+.choice{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice .k{font-weight:700;color:var(--muted);flex:none;width:1.2em}
+.choice.right{background:var(--ok-soft);border-color:var(--ok)}
+.choice.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.why{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.qmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.score{font:400 34px/1 var(--f-board);color:var(--accent)}
+.row-btns{display:flex;gap:6px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:5px 12px;font-size:13px;text-align:left}
+.chip:hover{border-color:var(--accent)}
+.composer{border-top:1px solid var(--line);padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.quick{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.quick .chip{white-space:nowrap}
+.atts{display:flex;gap:6px;flex-wrap:wrap}
+.att{position:relative}
+.att img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block}
+.att button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:99px;border:0;background:var(--fg);color:var(--bg);display:grid;place-items:center;padding:0}
+.att button svg{width:12px;height:12px}
+.inrow{display:flex;gap:6px;align-items:flex-end}
+.inrow textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surface-2);max-height:180px;min-height:42px;line-height:1.45}
+.send{height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-fg);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.send:disabled{opacity:.5;cursor:default}
+.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.status .spin{width:14px;height:14px;border-radius:99px;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.exam-opts{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.dict-hint{font-size:13px;color:var(--muted);font-style:italic}
+
+/* dialogs */
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);padding:0;width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 48px)}
+dialog::backdrop{background:rgba(8,16,12,.5)}
+.dlg{display:flex;flex-direction:column;gap:14px;padding:18px}
+.dlg h2{margin:0;font-size:18px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:13px;font-weight:600}
+.field small{color:var(--muted);font-size:12px}
+.field input[type=password],.field input[type=text]{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface-2)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14px;font-weight:400}
+.seg input{accent-color:var(--accent)}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:60dvh;overflow:auto}
+.hist li{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.hist .t{flex:1;min-width:0}
+.hist .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.hist .t span{font-size:12px;color:var(--muted)}
+.badge{font-size:11px;border-radius:99px;padding:2px 8px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.dlg-foot{display:flex;justify-content:flex-end;gap:8px}
+
+/* phone */
+@media (max-width: 880px){
+  html,body{height:auto}
+  .app{display:flex;flex-direction:column}
+  .board-frame{flex:none;height:min(64svh,560px)}
+  .panel{min-height:460px}
+  .feed{max-height:none}
+  .composer{position:sticky;bottom:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  .top-actions{margin-left:0;width:100%}
+  .tag{display:none}
+  .player{flex-wrap:wrap}
+  .caption{flex-basis:100%;order:-1}
+}
+</style>
+
+<header class="top">
+  <div class="brand"><span class="logo">ครูกระดาน</span><span class="tag">ติวเตอร์ส่วนตัว พูดไป เขียนไป ทีละขั้น</span></div>
+  <nav class="modes" role="tablist" aria-label="โหมดการเรียน">
+    <button class="mode" role="tab" id="mode-topic" data-mode="topic" aria-selected="true">เรียนหัวข้อ</button>
+    <button class="mode" role="tab" id="mode-homework" data-mode="homework" aria-selected="false">ช่วยทำการบ้าน</button>
+    <button class="mode" role="tab" id="mode-exam" data-mode="exam" aria-selected="false">เตรียมสอบ</button>
+  </nav>
+  <div class="top-actions">
+    <select class="sel" id="subject" aria-label="วิชา">
+      <option value="auto">ทุกวิชา (ให้ครูดูเอง)</option>
+      <option value="math">คณิตศาสตร์</option>
+      <option value="physics">ฟิสิกส์</option>
+      <option value="chem">เคมี</option>
+      <option value="bio">ชีววิทยา</option>
+      <option value="sci">วิทยาศาสตร์ทั่วไป</option>
+      <option value="eng">ภาษาอังกฤษ</option>
+      <option value="thai">ภาษาไทย</option>
+      <option value="social">สังคม / ประวัติศาสตร์</option>
+      <option value="cs">คอมพิวเตอร์ / เขียนโค้ด</option>
+    </select>
+    <select class="sel" id="level" aria-label="ระดับชั้น">
+      <option value="primary">ประถม</option>
+      <option value="lower">ม.ต้น</option>
+      <option value="upper" selected>ม.ปลาย</option>
+      <option value="uni">มหาวิทยาลัย</option>
+      <option value="adult">บุคคลทั่วไป</option>
+    </select>
+    <button class="btn" id="newBtn" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>บทเรียนใหม่</button>
+    <button class="icon-btn" id="histBtn" type="button" aria-label="บทเรียนที่ผ่านมา" title="บทเรียนที่ผ่านมา"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/></svg></button>
+    <button class="icon-btn" id="setBtn" type="button" aria-label="ตั้งค่า" title="ตั้งค่า"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+</header>
+
+<main class="app">
+  <section class="board-wrap" aria-label="กระดาน">
+    <div class="board-frame">
+      <div class="board" id="board">
+        <div class="board-inner" id="boardInner">
+          <div class="board-head"><span class="lt" id="boardTitle"></span><span id="boardDate"></span></div>
+          <div id="boardContent"></div>
+          <canvas class="ink-layer" id="ink"></canvas>
+        </div>
+      </div>
+      <div class="board-tools">
+        <div class="pen-set" id="penSet" hidden>
+          <button class="swatch" type="button" data-pen="k" aria-label="ปากกาสีดำ/ชอล์กขาว" aria-pressed="true" style="background:var(--ink)"></button>
+          <button class="swatch" type="button" data-pen="b" aria-label="ปากกาสีน้ำเงิน" aria-pressed="false" style="background:var(--ink-b)"></button>
+          <button class="swatch" type="button" data-pen="r" aria-label="ปากกาสีแดง" aria-pressed="false" style="background:var(--ink-r)"></button>
+          <button class="swatch" type="button" data-pen="g" aria-label="ปากกาสีเขียว" aria-pressed="false" style="background:var(--ink-g)"></button>
+          <button class="tool" type="button" id="eraserBtn" aria-pressed="false" aria-label="ยางลบ" title="ยางลบ"><svg class="i" viewBox="0 0 24 24"><path d="M7 21h10M5.5 13.5l6-6a2 2 0 0 1 2.8 0l3.2 3.2a2 2 0 0 1 0 2.8L12 19H8.5l-3-3a1.8 1.8 0 0 1 0-2.5z"/></svg></button>
+          <button class="tool" type="button" id="clearInkBtn" aria-label="ลบลายมือทั้งหมด" title="ลบลายมือทั้งหมด"><svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+          <button class="btn primary" type="button" id="sendInkBtn" title="ส่งลายมือบนกระดานให้ครูตรวจ"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>ให้ครูตรวจ</button>
+        </div>
+        <button class="tool" type="button" id="penBtn" aria-pressed="false" aria-label="เขียนบนกระดานเอง" title="เขียนบนกระดานเอง (ส่งให้ครูตรวจได้)"><svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+      </div>
+    </div>
+    <div class="player" id="player">
+      <div class="ctrls">
+        <button class="icon-btn" id="playBtn" type="button" aria-label="เล่น"><svg class="i" viewBox="0 0 24 24" id="playIcon"><path d="M7 4v16l13-8z"/></svg></button>
+        <button class="icon-btn" id="nextBtn" type="button" aria-label="ข้ามไปขั้นถัดไป" title="ข้ามไปขั้นถัดไป"><svg class="i" viewBox="0 0 24 24"><path d="M5 4l10 8-10 8zM19 5v14"/></svg></button>
+        <button class="icon-btn" id="replayBtn" type="button" aria-label="เล่นบทเรียนใหม่ตั้งแต่ต้น" title="เล่นใหม่ตั้งแต่ต้น"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+        <button class="icon-btn" id="allBtn" type="button" aria-label="แสดงทุกขั้นทันที" title="แสดงทุกขั้นทันที"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
+      </div>
+      <div class="caption" id="caption" aria-live="polite">
+        <div class="who"><span class="speaking-dot"></span><span>ครูพูด</span><span id="stepNo"></span></div>
+        <div class="say" id="sayText"></div>
+      </div>
+      <button class="icon-btn" id="voiceBtn" type="button" aria-pressed="true" aria-label="เปิด/ปิดเสียงครู" title="เปิด/ปิดเสียงครู"><svg class="i" viewBox="0 0 24 24" id="voiceIcon"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></button>
+    </div>
+  </section>
+
+  <aside class="panel" aria-label="คุยกับครู">
+    <div class="panel-head"><h2 id="panelTitle">คุยกับครู</h2><span class="badge" id="providerBadge">กำลังเชื่อมต่อ…</span></div>
+    <div class="feed" id="feed"></div>
+    <form class="composer" id="composer">
+      <div class="quick" id="quick"></div>
+      <div class="exam-opts" id="examOpts" hidden>
+        <label for="quizN">จำนวนข้อควิซ</label>
+        <select class="sel" id="quizN"><option>5</option><option selected>8</option><option>10</option><option>15</option></select>
+      </div>
+      <div class="atts" id="atts"></div>
+      <div class="dict-hint" id="dictHint" hidden></div>
+      <div class="status" id="status" hidden><span class="spin"></span><span id="statusText">ครูกำลังคิด…</span><button class="btn" type="button" id="stopBtn">หยุด</button></div>
+      <div class="inrow">
+        <label class="icon-btn" for="fileIn" id="attachBtn" title="แนบรูป (การบ้าน/โน้ต)" aria-label="แนบรูป"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 8"/></svg></label>
+        <input type="file" id="fileIn" accept="image/*" multiple hidden>
+        <button class="icon-btn" type="button" id="micBtn" aria-pressed="false" aria-label="พูดแทนพิมพ์" title="พูดแทนพิมพ์" hidden><svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <textarea id="input" rows="1" placeholder="พิมพ์คำถาม หรือแนบรูปโจทย์…" aria-label="ข้อความถึงครู"></textarea>
+        <button class="send" id="sendBtn" type="submit"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>ส่ง</span></button>
+      </div>
+    </form>
+  </aside>
+</main>
+
+<dialog id="setDlg">
+  <form class="dlg" method="dialog" id="setForm">
+    <h2>ตั้งค่า</h2>
+    <div class="field">
+      <label>เสียงครู</label>
+      <div class="seg" id="voiceSeg">
+        <label><input type="radio" name="voice" value="buttery">นุ่ม</label>
+        <label><input type="radio" name="voice" value="airy">โปร่ง</label>
+        <label><input type="radio" name="voice" value="glassy">ใส</label>
+        <label><input type="radio" name="voice" value="rounded">กลม</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="rateIn">ความเร็วการพูด <span id="rateVal"></span></label>
+      <input type="range" id="rateIn" min="0.7" max="1.5" step="0.05">
+    </div>
+    <div class="field">
+      <label>ภาษาที่ครูใช้</label>
+      <div class="seg">
+        <label><input type="radio" name="lang" value="auto">ตามที่เราพิมพ์</label>
+        <label><input type="radio" name="lang" value="th">ไทย</label>
+        <label><input type="radio" name="lang" value="en">English</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>ความลึกของครู</label>
+      <div class="seg">
+        <label><input type="radio" name="tier" value="quick">เร็ว</label>
+        <label><input type="radio" name="tier" value="default">สมดุล</label>
+        <label><input type="radio" name="tier" value="complex">ละเอียดสุด</label>
+      </div>
+      <small>โหมด "ละเอียดสุด" เหมาะกับโจทย์ยาก แต่ตอบช้ากว่า</small>
+    </div>
+    <div class="field" id="apiField">
+      <label for="apiKey">Anthropic API key (ใช้เมื่อเปิดไฟล์นอกแอป Claude)</label>
+      <input type="password" id="apiKey" autocomplete="off" placeholder="sk-ant-…">
+      <small>เมื่อเปิดหน้านี้ใน Claude จะใช้บัญชี Claude ของคุณโดยตรง ไม่ต้องมี key คีย์จะเก็บไว้ในเบราว์เซอร์นี้เท่านั้น</small>
+      <select class="sel" id="apiModel" aria-label="โมเดลเมื่อใช้ API key">
+        <option value="claude-opus-5-5">Claude Opus 5.5 (แนะนำ)</option>
+        <option value="claude-sonnet-5-5">Claude Sonnet 5.5</option>
+        <option value="claude-haiku-5-5">Claude Haiku 5.5 (ประหยัด)</option>
+      </select>
+    </div>
+    <div class="dlg-foot"><button class="btn primary" value="ok">เสร็จ</button></div>
+  </form>
+</dialog>
+
+<dialog id="histDlg">
+  <div class="dlg">
+    <h2>บทเรียนที่ผ่านมา</h2>
+    <ul class="hist" id="histList"></ul>
+    <p class="note" id="histEmpty">ยังไม่มีบทเรียนที่บันทึกไว้ในเบราว์เซอร์นี้</p>
+    <div class="dlg-foot"><button class="btn" type="button" id="histClose">ปิด</button></div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const num = (v, d) => (typeof v === "number" && isFinite(v)) ? v : (isFinite(parseFloat(v)) ? parseFloat(v) : d);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } }
+};
+
+/* ================= settings ================= */
+const S = Object.assign({ mode: "topic", subject: "auto", level: "upper", voice: "buttery", rate: 1, lang: "auto", tier: "default", voiceOn: true, apiKey: "", apiModel: "claude-opus-5-5", quizN: "8" }, store.get("kb-settings", {}));
+const saveS = () => store.set("kb-settings", S);
+
+/* ================= mini TeX ================= */
+const SYM = { times:"×", div:"÷", pm:"±", mp:"∓", le:"≤", leq:"≤", ge:"≥", geq:"≥", ne:"≠", neq:"≠", approx:"≈", equiv:"≡", sim:"∼", propto:"∝",
+  pi:"π", theta:"θ", alpha:"α", beta:"β", gamma:"γ", Gamma:"Γ", delta:"δ", Delta:"Δ", lambda:"λ", mu:"μ", sigma:"σ", Sigma:"Σ", omega:"ω", Omega:"Ω", phi:"φ", varphi:"φ", Phi:"Φ", rho:"ρ", epsilon:"ε", varepsilon:"ε", tau:"τ", eta:"η", kappa:"κ", nu:"ν", psi:"ψ", chi:"χ", xi:"ξ", zeta:"ζ",
+  to:"→", rightarrow:"→", leftarrow:"←", Rightarrow:"⇒", Leftarrow:"⇐", iff:"⇔", Leftrightarrow:"⇔", leftrightarrow:"↔", rightleftharpoons:"⇌", uparrow:"↑", downarrow:"↓", implies:"⇒",
+  cdot:"·", degree:"°", circ:"°", infty:"∞", sum:"Σ", prod:"Π", int:"∫", oint:"∮", partial:"∂", nabla:"∇", therefore:"∴", because:"∵", angle:"∠", triangle:"△", perp:"⊥", parallel:"∥",
+  in:"∈", notin:"∉", cup:"∪", cap:"∩", subset:"⊂", subseteq:"⊆", supset:"⊃", emptyset:"∅", varnothing:"∅", forall:"∀", exists:"∃", neg:"¬", land:"∧", lor:"∨", ldots:"…", cdots:"⋯", dots:"…",
+  quad:" ", qquad:"  ", ",":" ", ";":" ", ":":" ", "!":"", " ":" ", "%":"%", "$":"$", "{":"{", "}":"}", "#":"#", "&":"&", "_":"_", "|":"‖",
+  sin:"sin", cos:"cos", tan:"tan", cot:"cot", sec:"sec", csc:"csc", log:"log", ln:"ln", lim:"lim", max:"max", min:"min", exp:"exp", det:"det",
+  left:"", right:"", big:"", Big:"", bigg:"", displaystyle:"", limits:"", nolimits:"", ell:"ℓ", hbar:"ħ", prime:"′", star:"⋆", ast:"∗", bullet:"•", checkmark:"✓", times_:"×" };
+function tex(src) {
+  src = String(src ?? ""); let i = 0;
+  const skipSp = () => { while (src[i] === " ") i++; };
+  function rawGroup() { skipSp(); if (src[i] !== "{") return src[i++] || ""; i++; let d = 1, s = ""; while (i < src.length) { const c = src[i++]; if (c === "{") d++; else if (c === "}") { if (!--d) break; } s += c; } return s; }
+  function group() { skipSp(); if (src[i] === "{") { i++; return seq("}"); } if (src[i] === "\\") return cmd(); const c = src[i++]; return c == null ? "" : esc(c); }
+  function cmd() {
+    i++; let name = "";
+    if (/[a-zA-Z]/.test(src[i] || "")) { while (i < src.length && /[a-zA-Z]/.test(src[i])) name += src[i++]; }
+    else name = src[i++] || "";
+    switch (name) {
+      case "\\": return "<br>";
+      case "frac": case "dfrac": case "tfrac": case "cfrac": { const a = group(), b = group(); return `<span class="frac"><span class="num">${a}</span><span class="den">${b}</span></span>`; }
+      case "sqrt": { let idx = ""; skipSp(); if (src[i] === "[") { i++; let s = ""; while (i < src.length && src[i] !== "]") s += src[i++]; i++; idx = `<sup class="root-i">${tex(s)}</sup>`; } const r = group(); return `${idx}<span class="sqrt"><span>√</span><span class="rc">${r}</span></span>`; }
+      case "text": case "textrm": case "mathrm": case "operatorname": case "mbox": case "textit": case "mathit": return esc(rawGroup());
+      case "textbf": case "mathbf": case "boldsymbol": case "bm": return `<b>${group()}</b>`;
+      case "overline": case "bar": case "widebar": return `<span class="ovl">${group()}</span>`;
+      case "vec": case "overrightarrow": return `<span class="vec">${group()}</span>`;
+      case "hat": case "widehat": return `${group()}̂`;
+      case "dot": return `${group()}̇`;
+      case "underline": return `<u>${group()}</u>`;
+      case "boxed": case "fbox": return `<span class="boxed">${group()}</span>`;
+      case "color": case "textcolor": rawGroup(); return group();
+      case "ce": return tex(rawGroup().replace(/([A-Za-z\)])(\d+)/g, "$1_{$2}").replace(/->/g, "\\to "));
+      default: return Object.prototype.hasOwnProperty.call(SYM, name) ? esc(SYM[name]) : esc(name);
+    }
+  }
+  function seq(end) {
+    let out = "";
+    while (i < src.length) {
+      const c = src[i];
+      if (end && c === end) { i++; return out; }
+      if (c === "\\") out += cmd();
+      else if (c === "^") { i++; out += `<sup>${group()}</sup>`; }
+      else if (c === "_") { i++; out += `<sub>${group()}</sub>`; }
+      else if (c === "{") { i++; out += seq("}"); }
+      else if (c === "}") i++;
+      else if (c === "*") { out += "×"; i++; }
+      else { out += esc(c); i++; }
+    }
+    return out;
+  }
+  return seq(null);
+}
+function plain(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>"); }
+function rich(s) {
+  s = String(s ?? ""); let out = "", last = 0, m;
+  const re = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$|\\\(([\s\S]+?)\\\)/g;
+  while ((m = re.exec(s))) { out += plain(s.slice(last, m.index)); out += `<span class="mx">${tex(m[1] ?? m[2] ?? m[3])}</span>`; last = re.lastIndex; }
+  return out + plain(s.slice(last));
+}
+const looksTex = s => /\\[a-zA-Z]|[\^_{}]/.test(s);
+function speechText(s) {
+  return String(s ?? "").replace(/\$([^$]*)\$/g, (_, m) => m).replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, "$1 ส่วน $2")
+    .replace(/\\[a-zA-Z]+/g, m => { const k = m.slice(1); return SYM[k] && /^[a-z]+$/i.test(SYM[k]) ? SYM[k] : (SYM[k] || " "); })
+    .replace(/[{}*_#`]/g, "").replace(/\s+/g, " ").trim();
+}
+
+/* ================= safe math for plots ================= */
+const FN = { sin: Math.sin, cos: Math.cos, tan: Math.tan, asin: Math.asin, acos: Math.acos, atan: Math.atan, sqrt: Math.sqrt, abs: Math.abs, ln: Math.log, log: Math.log10, exp: Math.exp, floor: Math.floor, ceil: Math.ceil, sinh: Math.sinh, cosh: Math.cosh };
+const NAMES = ["asin", "acos", "atan", "sinh", "cosh", "sqrt", "floor", "ceil", "sin", "cos", "tan", "abs", "exp", "log", "ln", "pi", "x", "e"];
+function compileFn(expr) {
+  let s = String(expr).toLowerCase().replace(/^\s*(y|f\s*\(\s*x\s*\))\s*=/, "").replace(/\\cdot|\\times|×|·/g, "*").replace(/÷/g, "/").replace(/[−–]/g, "-").replace(/\*\*/g, "^")
+    .replace(/π|\\pi/g, "pi").replace(/²/g, "^2").replace(/³/g, "^3").replace(/√/g, "sqrt").replace(/\\sqrt/g, "sqrt").replace(/[{}]/g, m => m === "{" ? "(" : ")").replace(/\|([^|]+)\|/g, "abs($1)").replace(/\s+/g, "");
+  const toks = []; let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (/[0-9.]/.test(c)) { let n = ""; while (i < s.length && /[0-9.]/.test(s[i])) n += s[i++]; toks.push({ t: "n", v: parseFloat(n) }); continue; }
+    if (/[a-z]/.test(c)) { const nm = NAMES.find(n => s.startsWith(n, i)); if (!nm) throw new Error("name"); i += nm.length; toks.push(nm in FN ? { t: "f", v: nm } : { t: "id", v: nm }); continue; }
+    if ("+-*/^()".includes(c)) { toks.push({ t: c }); i++; continue; }
+    throw new Error("char " + c);
+  }
+  let p = 0;
+  const pk = () => toks[p], nx = () => toks[p++];
+  const startsAtom = t => t && (t.t === "n" || t.t === "id" || t.t === "f" || t.t === "(");
+  function add() { let a = mul(); while (pk() && (pk().t === "+" || pk().t === "-")) { const op = nx().t, b = mul(), l = a; a = op === "+" ? x => l(x) + b(x) : x => l(x) - b(x); } return a; }
+  function mul() { let a = unary(); for (;;) { const t = pk(); if (t && (t.t === "*" || t.t === "/")) { nx(); const b = unary(), l = a; a = t.t === "*" ? x => l(x) * b(x) : x => l(x) / b(x); } else if (startsAtom(t)) { const b = pow(), l = a; a = x => l(x) * b(x); } else return a; } }
+  function unary() { const t = pk(); if (t && t.t === "-") { nx(); const a = unary(); return x => -a(x); } if (t && t.t === "+") { nx(); return unary(); } return pow(); }
+  function pow() { const b = atom(); if (pk() && pk().t === "^") { nx(); const e = unary(); return x => Math.pow(b(x), e(x)); } return b; }
+  function atom() {
+    const t = nx(); if (!t) throw new Error("end");
+    if (t.t === "n") { const v = t.v; return () => v; }
+    if (t.t === "id") { if (t.v === "x") return x => x; const v = t.v === "pi" ? Math.PI : Math.E; return () => v; }
+    if (t.t === "f") { const f = FN[t.v]; const a = pk() && pk().t === "(" ? atom() : pow(); return x => f(a(x)); }
+    if (t.t === "(") { const a = add(); if (pk() && pk().t === ")") nx(); return a; }
+    throw new Error("tok");
+  }
+  const f = add(); if (p < toks.length) throw new Error("rest");
+  return f;
+}
+function niceStep(range) { const raw = range / 8, mag = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / mag; return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * mag; }
+const fmtN = v => { const r = Math.round(v * 1000) / 1000; return String(r).replace("-", "−"); };
+const COLS = ["b", "r", "g", "y", "k"];
+const colKey = c => ({ k: "k", b: "b", r: "r", g: "g", y: "y", black: "k", blue: "b", red: "r", green: "g", yellow: "y", amber: "y", orange: "y", white: "k" }[String(c || "k").toLowerCase()] || "k");
+
+let plotSeq = 0;
+function plotSVG(el) {
+  const W = 440, H = 290, P = 30, cid = "kbclip" + (++plotSeq);
+  const fns = (Array.isArray(el.fns) ? el.fns : (el.fn ? [el.fn] : [])).slice(0, 5);
+  const comp = fns.map(f => { try { return compileFn(f); } catch { return null; } });
+  let [x0, x1] = Array.isArray(el.x) && el.x.length === 2 ? el.x.map(Number) : [-10, 10];
+  if (!(x1 > x0)) { x0 = -10; x1 = 10; }
+  const N = 360, samples = comp.map(f => { const a = []; for (let k = 0; k <= N; k++) { const x = x0 + (x1 - x0) * k / N; let y = NaN; if (f) { try { y = f(x); } catch {} } a.push([x, y]); } return a; });
+  let y0, y1;
+  if (Array.isArray(el.y) && el.y.length === 2 && Number(el.y[1]) > Number(el.y[0])) [y0, y1] = el.y.map(Number);
+  else {
+    const ys = samples.flat().map(p => p[1]).filter(isFinite).sort((a, b) => a - b);
+    if (ys.length) { y0 = ys[Math.floor(ys.length * .03)]; y1 = ys[Math.floor(ys.length * .97)]; } else { y0 = -10; y1 = 10; }
+    (el.pts || []).forEach(p => { if (isFinite(p[1])) { y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); } });
+    if (y0 > 0) y0 = Math.min(0, y0); if (y1 < 0) y1 = Math.max(0, y1);
+    if (y1 - y0 < 1e-9) { y0 -= 1; y1 += 1; }
+    const pad = (y1 - y0) * .1; y0 -= pad; y1 += pad;
+  }
+  const sx = x => P + (x - x0) / (x1 - x0) * (W - 2 * P), sy = y => H - P - (y - y0) / (y1 - y0) * (H - 2 * P);
+  let g = "";
+  const stx = niceStep(x1 - x0), sty = niceStep(y1 - y0);
+  for (let v = Math.ceil(x0 / stx) * stx; v <= x1 + 1e-9; v += stx) { g += `<line class="grid" x1="${sx(v)}" y1="${P}" x2="${sx(v)}" y2="${H - P}"/>`; if (Math.abs(v) > 1e-9) g += `<text class="tick" x="${sx(v)}" y="${clamp(sy(0) + 14, P + 10, H - P + 14)}" text-anchor="middle">${fmtN(v)}</text>`; }
+  for (let v = Math.ceil(y0 / sty) * sty; v <= y1 + 1e-9; v += sty) { g += `<line class="grid" x1="${P}" y1="${sy(v)}" x2="${W - P}" y2="${sy(v)}"/>`; if (Math.abs(v) > 1e-9) g += `<text class="tick" x="${clamp(sx(0) - 5, P - 4, W - P)}" y="${sy(v) + 4}" text-anchor="end">${fmtN(v)}</text>`; }
+  const ax = clamp(sy(0), P, H - P), ay = clamp(sx(0), P, W - P);
+  g += `<line class="axis" x1="${P}" y1="${ax}" x2="${W - P + 8}" y2="${ax}"/><line class="axis" x1="${ay}" y1="${H - P}" x2="${ay}" y2="${P - 8}"/>`;
+  g += `<text class="tick" x="${W - P + 10}" y="${ax + 4}">x</text><text class="tick" x="${ay + 5}" y="${P - 10}">y</text>`;
+  let curves = "", legend = "";
+  samples.forEach((pts, j) => {
+    const c = COLS[j % COLS.length]; let d = "", pen = false, prevY = null;
+    const lim = (y1 - y0) * 3;
+    for (const [x, y] of pts) {
+      if (!isFinite(y) || y < y0 - lim || y > y1 + lim || (prevY !== null && Math.abs(y - prevY) > (y1 - y0) * 1.5)) { pen = false; prevY = isFinite(y) ? y : null; continue; }
+      d += (pen ? "L" : "M") + sx(x).toFixed(1) + " " + sy(y).toFixed(1); pen = true; prevY = y;
+    }
+    if (d) curves += `<path class="draw sv-${c}" pathLength="1" d="${d}" fill="none" stroke-width="2.6" stroke-linecap="round" style="--dl:${j * 500}ms;--d:900ms"/>`;
+    legend += `<text class="fadein tf-${c}" x="${P + 8}" y="${P + 4 + j * 19}" font-size="15" style="--dl:${j * 500}ms">y = ${esc(String(fns[j]).replace(/^\s*y\s*=\s*/, ""))}</text>`;
+  });
+  let pts = "";
+  (Array.isArray(el.pts) ? el.pts : []).slice(0, 8).forEach((p, j) => {
+    if (!Array.isArray(p) || !isFinite(p[0]) || !isFinite(p[1])) return;
+    const X = sx(+p[0]), Y = sy(+p[1]);
+    pts += `<circle class="fadein tf-r" cx="${X}" cy="${Y}" r="4.5" style="--dl:${900 + j * 200}ms"/>`;
+    if (p[2]) pts += `<text class="fadein tf-r" x="${X + 8}" y="${Y - 8}" font-size="14" style="--dl:${900 + j * 200}ms">${esc(p[2])}</text>`;
+  });
+  return { html: `<svg class="b-svg el" viewBox="0 0 ${W} ${H + 6}" role="img" aria-label="กราฟ ${esc(fns.join(", "))}"><defs><clipPath id="${cid}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath></defs>${g}<g clip-path="url(#${cid})">${curves}</g>${pts}${legend}</svg>`, dur: 900 + fns.length * 500 };
+}
+
+function figSVG(el) {
+  const w = clamp(num(el.w, 100), 10, 2000), h = clamp(num(el.h, 60), 10, 2000);
+  const sw = Math.max(w, h) / 160, fs = Math.max(w, h) / 20;
+  const shapes = (Array.isArray(el.s) ? el.s : Array.isArray(el.shapes) ? el.shapes : []).slice(0, 60);
+  let out = "", t = 0;
+  for (const raw of shapes) {
+    let s = raw;
+    if (Array.isArray(raw)) s = { t: raw[0], p: raw.slice(1).filter(v => typeof v === "number"), v: raw.find((v, k) => k > 0 && typeof v === "string") };
+    if (!s || typeof s !== "object") continue;
+    const p = (Array.isArray(s.p) ? s.p : []).map(Number);
+    const c = colKey(s.c), dash = s.d ? ` stroke-dasharray="${sw * 3} ${sw * 2.5}"` : "";
+    const cls = s.d ? `fadein sv-${c}` : `draw sv-${c}`;
+    const fill = s.f ? `fill="currentColor" fill-opacity=".14" class="${cls} c-${c}"` : `fill="none" class="${cls}"`;
+    const st = `stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"${s.d ? "" : ' pathLength="1"'} style="--dl:${t}ms;--d:500ms"${dash}`;
+    const type = String(s.t || s.type || "").toLowerCase();
+    if ((type === "line" || type === "arrow" || type === "darrow") && p.length >= 4) {
+      out += `<line x1="${p[0]}" y1="${p[1]}" x2="${p[2]}" y2="${p[3]}" ${fill} ${st}/>`;
+      const head = (ax, ay, bx, by) => { const a = Math.atan2(by - ay, bx - ax), L = sw * 5; return `<polyline points="${bx - L * Math.cos(a - .45)},${by - L * Math.sin(a - .45)} ${bx},${by} ${bx - L * Math.cos(a + .45)},${by - L * Math.sin(a + .45)}" fill="none" class="fadein sv-${c}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" style="--dl:${t + 400}ms"/>`; };
+      if (type !== "line") out += head(p[0], p[1], p[2], p[3]);
+      if (type === "darrow") out += head(p[2], p[3], p[0], p[1]);
+    } else if (type === "circle" && p.length >= 3) out += `<circle cx="${p[0]}" cy="${p[1]}" r="${Math.abs(p[2])}" ${fill} ${st}/>`;
+    else if (type === "ellipse" && p.length >= 4) out += `<ellipse cx="${p[0]}" cy="${p[1]}" rx="${Math.abs(p[2])}" ry="${Math.abs(p[3])}" ${fill} ${st}/>`;
+    else if (type === "rect" && p.length >= 4) out += `<rect x="${p[0]}" y="${p[1]}" width="${Math.abs(p[2])}" height="${Math.abs(p[3])}" rx="${sw}" ${fill} ${st}/>`;
+    else if ((type === "poly" || type === "polygon" || type === "pl" || type === "polyline") && p.length >= 4) {
+      const pts = []; for (let k = 0; k + 1 < p.length; k += 2) pts.push(p[k] + "," + p[k + 1]);
+      out += `<${type === "pl" || type === "polyline" ? "polyline" : "polygon"} points="${pts.join(" ")}" ${fill} ${st}/>`;
+    } else if (type === "arc" && p.length >= 5) {
+      const [cx, cy, r, a1, a2] = p, rad = a => a * Math.PI / 180;
+      const xA = cx + r * Math.cos(rad(a1)), yA = cy - r * Math.sin(rad(a1)), xB = cx + r * Math.cos(rad(a2)), yB = cy - r * Math.sin(rad(a2));
+      const large = Math.abs(a2 - a1) % 360 > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1;
+      out += `<path d="M${xA} ${yA} A${r} ${r} 0 ${large} ${sweep} ${xB} ${yB}" ${fill} ${st}/>`;
+    } else if (type === "dot" && p.length >= 2) out += `<circle cx="${p[0]}" cy="${p[1]}" r="${sw * 2.2}" class="fadein tf-${c}" style="--dl:${t}ms"/>`;
+    else if ((type === "text" || type === "label") && p.length >= 2) {
+      const size = s.s ? clamp(num(s.s, fs), fs * .5, fs * 2) : fs;
+      out += `<text x="${p[0]}" y="${p[1]}" font-size="${size}" text-anchor="${s.a === "l" ? "start" : s.a === "r" ? "end" : "middle"}" dominant-baseline="middle" class="fadein tf-${c}" style="--dl:${t}ms">${esc(s.v ?? s.text ?? "")}</text>`;
+    } else continue;
+    t += 260;
+  }
+  return { html: `<svg class="b-svg el" viewBox="${-w * .04} ${-h * .06} ${w * 1.08} ${h * 1.12}" role="img" aria-label="แผนภาพ">${out}</svg>`, dur: t + 400 };
+}
+
+/* ================= board elements ================= */
+function textDur(t) { return clamp(String(t || "").length * 32, 450, 2200); }
+function renderEl(e) {
+  if (typeof e === "string") e = { k: "w", t: e };
+  if (!e || typeof e !== "object") return null;
+  const k = String(e.k || e.type || (e.t ? "w" : "")).toLowerCase();
+  const c = "c-" + colKey(e.c);
+  const t = e.t ?? e.text ?? "";
+  const wrap = (cls, inner, dur) => ({ html: `<div class="el ${cls} ${c} wr" style="--d:${dur}ms">${inner}</div>`, dur });
+  switch (k) {
+    case "h": return wrap("b-h", rich(t), textDur(t));
+    case "w": case "text": return wrap("b-w", rich(t), textDur(t));
+    case "m": case "math": { const inner = String(t).includes("$") || !looksTex(t) && /[ก-๙]/.test(t) ? rich(t) : `<span class="mx">${tex(t)}</span>`; return wrap("b-m", inner, textDur(t)); }
+    case "n": case "note": return wrap("b-n", rich(t), textDur(t));
+    case "box": return wrap("b-box", String(t).includes("$") || !looksTex(t) ? rich(t) : `<span class="mx">${tex(t)}</span>`, textDur(t));
+    case "list": { const items = (Array.isArray(e.items) ? e.items : []).slice(0, 10); return wrap("b-list-wrap", `<ul class="b-list">${items.map(x => `<li>${rich(x)}</li>`).join("")}</ul>`, clamp(items.join("").length * 25, 500, 3000)); }
+    case "table": { const rows = (Array.isArray(e.rows) ? e.rows : []).slice(0, 14).filter(Array.isArray); if (!rows.length) return null; const [hd, ...rest] = rows; return wrap("b-tab", `<table><thead><tr>${hd.map(x => `<th>${rich(x)}</th>`).join("")}</tr></thead><tbody>${rest.map(r => `<tr>${r.map(x => `<td>${rich(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>`, clamp(rows.flat().join("").length * 18, 600, 3000)); }
+    case "plot": case "graph": { const r = plotSVG(e); return { html: `<div class="${c}">${r.html}</div>`, dur: r.dur }; }
+    case "fig": case "diagram": { const r = figSVG(e); return { html: `<div class="${c}">${r.html}</div>`, dur: r.dur }; }
+    case "div": case "hr": return { html: `<hr class="b-div">`, dur: 200 };
+    default: return t ? wrap("b-w", rich(t), textDur(t)) : null;
+  }
+}
+
+/* ================= state ================= */
+const boardEl = $("#board"), inner = $("#boardInner"), content = $("#boardContent"), feed = $("#feed");
+const V = { sample: null, tts: null, ttsOk: true, ttsLangs: null, dict: null, sr: null, imgLimits: null, ready: false, provider: "pending" };
+let L = null; // current lesson
+const P = { cursor: 0, playing: false, running: false, restart: false };
+let gen = 0; const waiters = new Set();
+function sleep(ms) { return new Promise(res => { const w = () => { clearTimeout(tm); waiters.delete(w); res(false); }; const tm = setTimeout(() => { waiters.delete(w); res(true); }, ms); waiters.add(w); }); }
+function waitForMore() { return new Promise(res => { const w = () => { waiters.delete(w); res(); }; waiters.add(w); }); }
+function wake() { for (const w of [...waiters]) w(); }
+function interrupt() { gen++; wake(); stopVoice(); finishAnims(); }
+function finishAnims() { $$(".step:not(.done)", content).forEach(s => s.classList.add("done")); }
+
+/* ================= playback ================= */
+function stepDom(idx) { return content.querySelector(`.step[data-i="${idx}"]`); }
+async function drawStep(idx, animate) {
+  if (stepDom(idx)) return;
+  const st = L.steps[idx]; const div = document.createElement("div");
+  div.className = "step" + (animate ? "" : " done"); div.dataset.i = idx;
+  let dl = 0, html = "";
+  for (const e of st.board) { const r = renderEl(e); if (!r) continue; html += r.html.replace(/^<(\w+) /, `<$1 data-dl="${dl}" `); dl += r.dur * .9; }
+  div.innerHTML = html;
+  div.querySelectorAll("[data-dl]").forEach(n => { const base = +n.dataset.dl; n.style.setProperty("--dl", base + "ms"); n.querySelectorAll("[style*='--dl']").forEach(ch => { const v = parseFloat(ch.style.getPropertyValue("--dl")) || 0; ch.style.setProperty("--dl", (base + v) + "ms"); }); });
+  content.appendChild(div);
+  scrollBoard();
+  if (animate && dl > 0 && !matchMedia("(prefers-reduced-motion: reduce)").matches) await sleep(dl + 150);
+  div.classList.add("done");
+}
+let stickBottom = true;
+boardEl.addEventListener("scroll", () => { stickBottom = boardEl.scrollTop + boardEl.clientHeight > boardEl.scrollHeight - 80; }, { passive: true });
+function scrollBoard() { if (stickBottom) requestAnimationFrame(() => boardEl.scrollTo({ top: boardEl.scrollHeight, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })); }
+
+function kick() { if (P.running) { P.restart = true; return; } playLoop(); }
+async function playLoop() {
+  P.running = true; const my = gen;
+  try {
+    while (P.playing && my === gen && L) {
+      if (P.cursor >= L.steps.length) { if (L.streaming) { await waitForMore(); if (my !== gen) break; continue; } break; }
+      const idx = P.cursor, st = L.steps[idx];
+      setCaption(st.say, idx);
+      const drawn = drawStep(idx, true);
+      await Promise.all([drawn, speakOrWait(st.say, my)]);
+      if (my !== gen) break;
+      P.cursor = idx + 1; updateProgress();
+    }
+  } finally {
+    P.running = false;
+    if (P.restart) { P.restart = false; playLoop(); return; }
+    if (my === gen && L && P.cursor >= L.steps.length && !L.streaming && P.playing) { P.playing = false; renderPlay(); segmentEnd(); }
+  }
+}
+function play() { if (!L || !L.steps.length) return; if (P.cursor >= L.steps.length && !L.streaming) { replay(); return; } P.playing = true; renderPlay(); kick(); }
+function pause() { P.playing = false; interrupt(); renderPlay(); }
+function skip() {
+  if (!L) return; const idx = P.cursor; interrupt();
+  if (idx < L.steps.length) { drawStep(idx, false); P.cursor = idx + 1; }
+  updateProgress();
+  if (P.cursor < L.steps.length) setCaption(L.steps[P.cursor].say, P.cursor);
+  if (P.playing) kick(); else if (P.cursor >= L.steps.length && !L.streaming) segmentEnd();
+}
+function replay() { if (!L || !L.steps.length) return; interrupt(); content.innerHTML = ""; P.cursor = 0; P.playing = true; stickBottom = true; renderPlay(); updateProgress(); kick(); }
+function showAll() {
+  if (!L) return; interrupt();
+  for (let k = 0; k < L.steps.length; k++) drawStep(k, false);
+  P.cursor = L.steps.length; P.playing = false; renderPlay(); updateProgress();
+  const last = L.steps[L.steps.length - 1]; if (last) setCaption(last.say, L.steps.length - 1);
+  if (!L.streaming) segmentEnd();
+}
+function setCaption(say, idx) { $("#sayText").innerHTML = rich(say || ""); $("#stepNo").textContent = L && L.steps.length ? `ขั้นที่ ${idx + 1} / ${L.steps.length}${L.streaming ? "+" : ""}` : ""; }
+function updateProgress() { if (!L) return; const n = L.steps.length; const cur = Math.max(1, Math.min(P.cursor + (P.playing && P.cursor < n ? 1 : 0), n)); $("#stepNo").textContent = n ? `ขั้นที่ ${cur} / ${n}${L.streaming ? "+" : ""}` : ""; }
+const ICON_PLAY = '<path d="M7 4v16l13-8z"/>', ICON_PAUSE = '<path d="M7 4h3v16H7zM14 4h3v16h-3z"/>';
+function renderPlay() { $("#playIcon").innerHTML = P.playing ? ICON_PAUSE : ICON_PLAY; $("#playBtn").setAttribute("aria-label", P.playing ? "หยุดชั่วคราว" : "เล่น"); }
+
+/* ================= voice ================= */
+let browserUtter = null;
+function langOf(t) { return /[฀-๿]/.test(t) ? "th" : "en"; }
+function voiceAvailable() { return (V.tts && V.ttsOk) || (!V.tts && V.provider !== "pending" && "speechSynthesis" in window); }
+async function speakOrWait(text, my) {
+  const t = speechText(text);
+  if (!t) return sleep(500);
+  const readMs = clamp(t.length * 70 / (S.rate || 1), 1600, 12000);
+  if (S.voiceOn && V.tts && V.ttsOk) {
+    const opts = { voice: S.voice, rate: S.rate };
+    const lg = langOf(t); if (V.ttsLangs && V.ttsLangs.includes(lg)) opts.language = lg;
+    try { setSpeaking(true); await V.tts.speak(t.slice(0, 1990), opts); return; }
+    catch (e) {
+      const code = e && e.code;
+      if (code === "stopped") return;
+      if (code === "not_granted" || code === "unavailable") { V.ttsOk = false; renderVoice(); }
+      if (my !== gen) return;
+      return sleep(readMs);
+    } finally { setSpeaking(false); }
+  }
+  if (S.voiceOn && !V.tts && "speechSynthesis" in window) {
+    return new Promise(res => {
+      try {
+        const u = new SpeechSynthesisUtterance(t); u.lang = langOf(t) === "th" ? "th-TH" : "en-US"; u.rate = S.rate || 1;
+        const done = () => { waiters.delete(w); setSpeaking(false); res(); };
+        const w = () => { try { speechSynthesis.cancel(); } catch {} done(); };
+        u.onend = done; u.onerror = done; waiters.add(w); browserUtter = u; setSpeaking(true); speechSynthesis.speak(u);
+      } catch { sleep(readMs).then(res); }
+    });
+  }
+  return sleep(readMs);
+}
+function stopVoice() { if (V.tts && V.tts.active && V.tts.active()) V.tts.stop().catch(() => {}); if (!V.tts && "speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch {} } setSpeaking(false); }
+function setSpeaking(on) { $("#caption").classList.toggle("speaking", !!on); }
+const ICON_VOICE = '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>', ICON_MUTE = '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/>';
+function renderVoice() {
+  const can = voiceAvailable(); const on = S.voiceOn && can;
+  $("#voiceIcon").innerHTML = on ? ICON_VOICE : ICON_MUTE; $("#voiceBtn").setAttribute("aria-pressed", String(on));
+  $("#voiceBtn").disabled = !can; $("#voiceBtn").title = can ? (on ? "ปิดเสียงครู" : "เปิดเสียงครู") : "อุปกรณ์นี้ยังเล่นเสียงครูไม่ได้ อ่านคำบรรยายด้านซ้ายแทน";
+}
+
+/* ================= stream line parser ================= */
+const TEXCMD = /^(frac|dfrac|tfrac|times|text|textbf|textrm|theta|tan|tau|to|triangle|therefore|beta|bar|boxed|because|bigg?|rho|right|rightarrow|rightleftharpoons|ne|neq|nabla|neg|nu|notin|nolimits)$/;
+function fixEscapes(line) {
+  return line.replace(/\\(u[0-9a-fA-F]{4}|[\s\S])([a-zA-Z]*)/g, (m, c, rest) => {
+    if (c.length > 1) return m;
+    if ('"\\/'.includes(c)) return m;
+    if ("bfnrt".includes(c)) return TEXCMD.test(c + rest) ? "\\\\" + c + rest : m;
+    return "\\\\" + c + rest;
+  });
+}
+function parseLine(line) {
+  let s = line.trim(); if (!s || s.startsWith("```")) return null;
+  const a = s.indexOf("{"), b = s.lastIndexOf("}"); if (a < 0 || b < a) return null; s = s.slice(a, b + 1);
+  for (const cand of [fixEscapes(s), s]) { try { const o = JSON.parse(cand); if (o && typeof o === "object") return o; } catch {} }
+  return null;
+}
+function lineFeeder(onObj) {
+  let buf = "";
+  return { push(d) { buf += d; let n; while ((n = buf.indexOf("\n")) >= 0) { const ln = buf.slice(0, n); buf = buf.slice(n + 1); const o = parseLine(ln); if (o) onObj(o); } },
+           end() { const o = parseLine(buf); buf = ""; if (o) onObj(o); } };
+}
+
+/* ================= tutor prompt ================= */
+const SUBJ = { auto: "any subject (infer it from the question)", math: "Mathematics", physics: "Physics", chem: "Chemistry", bio: "Biology", sci: "General science", eng: "English language", thai: "Thai language", social: "Social studies / History", cs: "Computer science / programming" };
+const LEVEL = { primary: "primary school (ป.1–ป.6)", lower: "lower secondary (ม.1–ม.3)", upper: "upper secondary (ม.4–ม.6)", uni: "university", adult: "an adult learner" };
+function rulesFor(lesson) {
+  const lang = S.lang === "th" ? "Thai" : S.lang === "en" ? "English" : "the language the student writes in (Thai if unclear)";
+  const modeRules = {
+    topic: `MODE: LEARN A TOPIC. Teach the concept the student asks about in 4–8 steps: intuition or a real-life hook → the key idea on the board → a worked example → a common mistake to avoid. Then end with a "check" question (prefer 3 choices) to test understanding. When the student answers: give feedback in a "msg", fix any misconception with 1–3 new steps, then continue to the next idea or go deeper, and end with another "check". When asked for a practice problem, give one and let the student try before solving it.`,
+    homework: `MODE: HOMEWORK COACH. Do NOT give the full final answer up front. First reply: 1–3 steps — copy the problem onto the board (transcribe it exactly if it comes from a photo; if the photo is unreadable say so and ask), make clear what is asked and what is given, point to the first move, then a "check" asking the student to try that move themselves. Every later reply: judge the student's attempt in a "msg" (say exactly what is right or wrong), show only the next step or one hint, then a "check" asking them to try again. If the student asks for a hint, give exactly one more, more specific hint. Only when the student asks for the full solution, or has reached the answer correctly: write the complete worked solution step by step, put the final answer in a green "box", and summarise the method in one board line.`,
+    exam: `MODE: EXAM PREP. The student gives notes as text and/or photos. First reply: a run-through review of the material in 5–9 steps (key terms, formulas, relationships, a mini worked example, memory tricks), then one "quiz" line with ${lesson.quizN || 8} multiple-choice questions covering the material (4 choices each, exactly one correct, vary the position of the correct answer, "why" explains in 1–2 sentences). Base everything on the notes; if the notes are thin, use standard curriculum knowledge and say so in a "msg". Later replies: re-teach whatever the student got wrong with board steps, answer questions, and give a fresh "quiz" when asked.`
+  }[lesson.mode];
+  return `You are ครูกระดาน ("Kru Board"), a warm, patient personal tutor who teaches by talking and writing on a whiteboard one step at a time, the way a great human tutor does at a board. The student is at ${LEVEL[lesson.level] || "secondary school"} level. Subject: ${SUBJ[lesson.subject] || SUBJ.auto}. Speak and write in ${lang}.
+
+${modeRules}
+
+OUTPUT FORMAT (strict): JSON Lines only. One complete JSON object per line and nothing else: no code fences, no prose outside JSON. The app draws each line as soon as it arrives.
+Line types:
+{"type":"meta","title":"..."} — only as the first line of your FIRST reply in a lesson: a short lesson title (max 40 chars).
+{"type":"step","say":"...","board":[...]} — one teaching step. "say" is what you say aloud while writing: 1–3 short, friendly spoken sentences (max 280 characters), plain text, no markdown, no $ or TeX — read maths out in words. "board" holds 0–4 elements you write during this step: terse board notes, never paragraphs.
+{"type":"msg","t":"..."} — a short chat line shown in the side panel, e.g. feedback on the student's answer.
+{"type":"check","q":"...","choices":["...","..."]} — end with this when the student should answer or try the next step. "choices" is optional (2–4 short options).
+{"type":"quiz","qs":[{"q":"...","c":["...","...","...","..."],"a":0,"why":"..."}]} — multiple-choice quiz; "a" is the 0-based index of the correct choice.
+
+BOARD ELEMENTS (optional "c" marker colour: "k" default, "b" blue for working, "r" red for warnings or corrections, "g" green for final answers, "y" amber for highlights):
+{"k":"h","t":"..."} heading for a board section
+{"k":"w","t":"..."} one written line (max 70 chars)
+{"k":"m","t":"..."} a centred maths line written as TeX without $, e.g. "x^{2} - 5x + 6 = 0"
+{"k":"n","t":"..."} small side note with an arrow (why / tip)
+{"k":"box","t":"..."} boxed key result, formula or definition
+{"k":"list","items":["...","..."]} short bullet notes
+{"k":"table","rows":[["head","head"],["cell","cell"]]}
+{"k":"plot","fns":["x^2-4","2x+1"],"x":[-5,5],"y":[-6,10],"pts":[[2,0,"(2, 0)"]]} graph of y = f(x); fns may use x, numbers, + - * / ^, sqrt(), sin(), cos(), tan(), abs(), ln(), log(), exp(), pi
+{"k":"fig","w":100,"h":60,"s":[{"t":"line","p":[x1,y1,x2,y2]},{"t":"arrow","p":[x1,y1,x2,y2]},{"t":"circle","p":[cx,cy,r]},{"t":"rect","p":[x,y,w,h]},{"t":"poly","p":[x1,y1,x2,y2,x3,y3]},{"t":"arc","p":[cx,cy,r,deg1,deg2]},{"t":"dot","p":[x,y]},{"t":"text","p":[x,y],"v":"label"}]} a simple diagram (geometry, forces, circuits, cells, timelines, number lines). Coordinates live in a w×h box, origin top-left, y grows downward. Any shape may add "c" (colour), "d":1 (dashed) or "f":1 (light fill). Keep labels short and clear of lines.
+{"k":"div"} a divider before a new part
+Inside "t" of h, w, n, box, list items and table cells, wrap maths in $...$ using simple TeX only: \\frac{a}{b}, \\sqrt{x}, x^{2}, x_{1}, \\times, \\div, \\pm, \\le, \\ge, \\ne, \\approx, \\pi, \\theta, \\Delta, \\to, \\cdot, \\degree, \\infty, \\text{...}. Chemistry like $H_{2}O$. JSON escaping: every TeX backslash must be written as \\\\ inside JSON strings (so \\frac is written "\\\\frac").
+
+TEACHING RULES: short steps that build on what is already on the board; check understanding often; be encouraging but honest; never invent facts or numbers; if the question contains a mistake, point it out gently; keep everything appropriate for the student's level.
+Example of a valid reply (format only):
+{"type":"meta","title":"Solving 3x = 12"}
+{"type":"step","say":"Let's write the equation first.","board":[{"k":"m","t":"3x = 12"}]}
+{"type":"check","q":"What should we do to both sides?","choices":["Divide by 3","Subtract 3"]}`;
+}
+
+/* ================= AI providers ================= */
+async function callClaude(turns, images, onDelta, signal) {
+  if (V.sample) {
+    const opts = { onText: ({ delta }) => onDelta(delta), signal, cache: false, modelTier: S.tier || "default" };
+    if (images.length) opts.images = images;
+    const r = await V.sample(turns, opts);
+    return { text: r.text, truncated: r.truncated };
+  }
+  if (S.apiKey) return callApi(turns, images, onDelta, signal);
+  throw { code: "no_provider" };
+}
+let sdkPromise = null;
+async function callApi(turns, images, onDelta, signal) {
+  sdkPromise = sdkPromise || import("https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.3.0/+esm");
+  const mod = await sdkPromise; const Anthropic = mod.default || mod.Anthropic;
+  const client = new Anthropic({ apiKey: S.apiKey, dangerouslyAllowBrowser: true });
+  const msgs = turns.map(t => ({ role: t.role, content: t.content }));
+  if (images.length) {
+    const blocks = [];
+    for (const f of images.slice(0, 5)) blocks.push(await toImageBlock(f));
+    const last = msgs[msgs.length - 1]; last.content = [...blocks, { type: "text", text: last.content }];
+  }
+  const model = S.apiModel || "claude-opus-5-5";
+  const params = { model, max_tokens: 16000, messages: msgs };
+  if (model !== "claude-haiku-5-5") { params.betas = ["server-side-fallback-2026-07-01"]; params.fallbacks = "default"; }
+  const stream = client.beta.messages.stream(params, { signal });
+  stream.on("text", d => onDelta(d));
+  try {
+    const m = await stream.finalMessage();
+    if (m.stop_reason === "refusal") throw { code: "refused" };
+    const text = m.content.filter(b => b.type === "text").map(b => b.text).join("");
+    return { text, truncated: m.stop_reason === "max_tokens" };
+  } catch (e) {
+    if (e && e.code) throw e;
+    if (signal && signal.aborted) throw { code: "cancelled" };
+    const st = e && e.status;
+    throw { code: st === 401 ? "bad_key" : st === 429 ? "rate_limited" : "upstream_error", message: String(e && e.message || e) };
+  }
+}
+async function toImageBlock(file) {
+  const bmp = await createImageBitmap(file);
+  const sc = Math.min(1, 1568 / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
+  const g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(bmp, 0, 0, cv.width, cv.height);
+  const data = cv.toDataURL("image/jpeg", .86).split(",")[1];
+  return { type: "image", source: { type: "base64", media_type: "image/jpeg", data } };
+}
+
+/* ================= lessons ================= */
+function newLesson() {
+  interrupt();
+  L = { id: "L" + Date.now().toString(36), mode: S.mode, subject: S.subject, level: S.level, quizN: +S.quizN || 8, title: "", steps: [], turns: [], pending: [], streaming: false, created: Date.now(), sample: false, active: true };
+  P.cursor = 0; P.playing = false; content.innerHTML = ""; stickBottom = true; ink.clear();
+  setTitle(""); setCaption("", 0); $("#stepNo").textContent = ""; renderPlay();
+}
+function setTitle(t) { $("#boardTitle").textContent = t ? "เรื่อง: " + t : ""; $("#panelTitle").textContent = t || "คุยกับครู"; }
+function pushStep(o) {
+  const board = (Array.isArray(o.board) ? o.board : Array.isArray(o.b) ? o.b : []).slice(0, 8);
+  L.steps.push({ say: String(o.say ?? o.s ?? ""), board });
+  wake(); updateProgress();
+}
+let busy = false, ctl = null;
+async function ask(text, { images = [], display = null } = {}) {
+  if (busy) return;
+  text = String(text || "").trim();
+  if (!text && !images.length) return;
+  if (V.provider === "none") { addNote("ยังไม่ได้เชื่อมต่อ Claude: เปิดหน้านี้ในแอป Claude หรือใส่ API key ในการตั้งค่า", true); openSettings(); return; }
+  if (images.length && !imagesAllowed()) { addNote("มุมมองนี้ส่งรูปให้ครูไม่ได้ ลองพิมพ์โจทย์แทนนะ", true); images = []; if (!text) return; }
+  const fresh = !L || !L.active;
+  if (fresh) newLesson();
+  if (!text) text = L.mode === "exam" ? "นี่คือโน้ตของฉันในรูป ช่วยสรุปและทำควิซให้หน่อย" : "นี่คือโจทย์ในรูป ช่วยสอนหน่อย";
+  addUserMsg(display ?? text, images);
+  const imgNote = images.length ? `\n[แนบรูป ${images.length} รูป]` : "";
+  if (fresh) L.turns.push({ role: "user", content: rulesFor(L) + "\n\n---\nStudent's request:\n" + text + imgNote });
+  else L.turns.push({ role: "user", content: text + imgNote });
+  const turns = [L.turns[0], ...L.turns.slice(1).slice(-14)];
+  if (turns.length > 1 && turns[1].role === "assistant" && L.turns.length > 15) turns.splice(1, 0, { role: "user", content: "(earlier turns omitted)" });
+  busy = true; setBusy(true); clearQuick();
+  ctl = new AbortController();
+  L.streaming = true; P.playing = true; renderPlay(); kick();
+  const lesson = L; let got = 0;
+  const feeder = lineFeeder(o => {
+    if (lesson !== L) return; got++;
+    const ty = String(o.type || (o.say !== undefined ? "step" : "")).toLowerCase();
+    if (ty === "meta") { if (o.title) { L.title = String(o.title).slice(0, 80); setTitle(L.title); } }
+    else if (ty === "step") pushStep(o);
+    else if (ty === "msg") addTutorMsg(o.t ?? o.text ?? "");
+    else if (ty === "check") L.pending.push({ type: "check", q: String(o.q ?? ""), choices: Array.isArray(o.choices) ? o.choices.slice(0, 5).map(String) : [] });
+    else if (ty === "quiz") { const qs = (Array.isArray(o.qs) ? o.qs : []).filter(q => q && Array.isArray(q.c) && q.c.length >= 2).map(q => ({ q: String(q.q ?? ""), c: q.c.map(String), a: clamp(Math.round(num(q.a, 0)), 0, q.c.length - 1), why: String(q.why ?? "") })); if (qs.length) L.pending.push({ type: "quiz", qs }); }
+  });
+  try {
+    const r = await callClaude(turns, images, d => feeder.push(d), ctl.signal);
+    feeder.end();
+    if (lesson === L) {
+      L.turns.push({ role: "assistant", content: r.text });
+      if (!got) addTutorMsg(r.text.slice(0, 3000));
+      if (r.truncated) addNote("คำตอบถูกตัดเพราะยาวเกินไป ลองถามทีละส่วนนะ");
+      if (!L.title) { L.title = text.slice(0, 40); setTitle(L.title); }
+      saveLesson();
+    }
+  } catch (e) {
+    feeder.end();
+    if (lesson === L) {
+      const code = e && e.code;
+      if (code === "cancelled") addNote("หยุดแล้ว");
+      else addNote(errorText(code, e), true);
+      if (!got) { L.turns.pop(); if (!L.turns.length) L.active = false; }
+      else if (e && e.text) L.turns.push({ role: "assistant", content: e.text });
+    }
+  } finally {
+    busy = false; setBusy(false); ctl = null;
+    if (lesson === L) { L.streaming = false; wake(); updateProgress(); if (!P.playing || !L.steps.length || P.cursor >= L.steps.length) { if (P.cursor >= L.steps.length) { P.playing = false; renderPlay(); } if (!P.playing) segmentEnd(); } }
+  }
+}
+function errorText(code, e) {
+  return ({ not_granted: "ยังไม่ได้อนุญาตให้หน้านี้ใช้ Claude กดอนุญาตแล้วลองส่งใหม่", sampling_disabled: "บัญชีนี้ใช้ Claude ในหน้านี้ไม่ได้", rate_limited: "ใช้งานถี่เกินไป รอสักครู่แล้วค่อยลองใหม่", session_expired: "เซสชันหมดอายุ กรุณาเข้าสู่ระบบ Claude ใหม่", refused: "ครูตอบคำถามนี้ไม่ได้ ลองเปลี่ยนวิธีถาม", image_rejected: "รูปนี้ใช้ไม่ได้ (ใหญ่เกินไปหรือไฟล์ไม่รองรับ) ลองรูปอื่น", images_unavailable: "มุมมองนี้ส่งรูปไม่ได้ ลองพิมพ์โจทย์แทน", prompt_too_large: "ข้อความยาวเกินไป ลองตัดให้สั้นลง", empty_completion: "ครูไม่ได้ตอบอะไรกลับมา ลองถามใหม่อีกครั้ง", no_provider: "ยังไม่ได้เชื่อมต่อ Claude: เปิดหน้านี้ในแอป Claude หรือใส่ API key ในการตั้งค่า", bad_key: "API key ไม่ถูกต้อง ตรวจสอบในการตั้งค่า" }[code]) || ("เชื่อมต่อไม่สำเร็จ ลองส่งใหม่อีกครั้ง" + (e && e.message ? ` (${String(e.message).slice(0, 120)})` : ""));
+}
+function segmentEnd() {
+  if (!L) return;
+  const items = L.pending.splice(0);
+  for (const it of items) { if (it.type === "check") addCheck(it); else if (it.type === "quiz") addQuiz(it); }
+  renderQuick();
+}
+
+/* ================= feed ================= */
+function addFeed(node) { feed.appendChild(node); requestAnimationFrame(() => feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" })); return node; }
+function el(tag, cls, html) { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
+function addUserMsg(text, images) {
+  const n = el("div", "msg me"); n.textContent = text;
+  if (images && images.length) { const th = el("div", "thumbs"); images.forEach(f => { const im = document.createElement("img"); im.alt = "รูปที่แนบ"; im.src = URL.createObjectURL(f); th.appendChild(im); }); n.appendChild(th); }
+  addFeed(n);
+}
+function addTutorMsg(t) { if (!String(t).trim()) return; addFeed(el("div", "msg tutor", rich(t))); }
+function addNote(t, err) { addFeed(el("div", "note" + (err ? " err" : ""), esc(t))); }
+function addCheck(it) {
+  const c = el("div", "card");
+  c.innerHTML = `<span class="label">ครูถาม</span><div class="q">${rich(it.q)}</div>`;
+  if (it.choices.length) {
+    const ch = el("div", "choices");
+    it.choices.forEach((x, k) => { const b = el("button", "choice", `<span class="k">${"กขคงจ"[k]}</span><span>${rich(x)}</span>`); b.type = "button"; b.onclick = () => { if (busy) return; $$(".choice", ch).forEach(z => z.disabled = true); b.classList.add("right"); ask(`คำตอบของฉัน: ${x}`); }; ch.appendChild(b); });
+    c.appendChild(ch);
+    c.appendChild(el("p", "note", "หรือพิมพ์คำตอบ/วิธีคิดของคุณด้านล่าง"));
+  } else c.appendChild(el("p", "note", "พิมพ์คำตอบด้านล่าง หรือเขียนบนกระดานแล้วกด “ให้ครูตรวจ”"));
+  addFeed(c);
+  $("#input").focus({ preventScroll: true });
+}
+function addQuiz(it) {
+  const c = el("div", "card"); const st = { i: 0, picks: [] };
+  const render = () => {
+    if (st.i >= it.qs.length) {
+      const right = st.picks.filter((p, k) => p === it.qs[k].a).length;
+      c.innerHTML = `<span class="label">ผลควิซ</span><div class="score">${right} / ${it.qs.length}</div><p>${right === it.qs.length ? "ถูกทุกข้อ เก่งมาก!" : right >= it.qs.length * .7 ? "ดีมาก เหลืออีกนิดเดียว" : "ไม่เป็นไร มาทบทวนข้อที่พลาดกัน"}</p>`;
+      const rb = el("div", "row-btns");
+      const missed = it.qs.map((q, k) => ({ q, k, p: st.picks[k] })).filter(x => x.p !== x.q.a);
+      if (missed.length) { const b = el("button", "btn primary", "ให้ครูสอนข้อที่ผิด"); b.type = "button"; b.onclick = () => ask("ช่วยอธิบายข้อที่ฉันตอบผิดบนกระดาน:\n" + missed.map(x => `- ข้อ: ${x.q.q} | ฉันตอบ: ${x.q.c[x.p]} | ที่ถูก: ${x.q.c[x.q.a]}`).join("\n"), { display: `ให้ครูสอนข้อที่ผิด (${missed.length} ข้อ)` }); rb.appendChild(b); }
+      const nb = el("button", "btn", "ควิซชุดใหม่"); nb.type = "button"; nb.onclick = () => ask(`ขอควิซชุดใหม่ ${L ? L.quizN : 8} ข้อ เน้นเรื่องที่ฉันยังพลาด ห้ามซ้ำข้อเดิม`, { display: "ขอควิซชุดใหม่" }); rb.appendChild(nb);
+      c.appendChild(rb); return;
+    }
+    const q = it.qs[st.i];
+    c.innerHTML = `<div class="qmeta"><span class="label">ควิซ</span><span>ข้อ ${st.i + 1} / ${it.qs.length}</span></div><div class="q">${rich(q.q)}</div>`;
+    const ch = el("div", "choices");
+    q.c.forEach((x, k) => {
+      const b = el("button", "choice", `<span class="k">${"กขคงจฉ"[k] || k + 1}</span><span>${rich(x)}</span>`); b.type = "button";
+      b.onclick = () => {
+        st.picks[st.i] = k; $$(".choice", ch).forEach((z, j) => { z.disabled = true; if (j === q.a) z.classList.add("right"); else if (j === k) z.classList.add("wrong"); });
+        const w = el("div", "why", `<b>${k === q.a ? "ถูกต้อง" : "ยังไม่ถูก"}</b> ${rich(q.why)}`); c.appendChild(w);
+        const nb = el("button", "btn primary", st.i + 1 < it.qs.length ? "ข้อต่อไป" : "ดูคะแนน"); nb.type = "button"; nb.onclick = () => { st.i++; render(); }; c.appendChild(nb); nb.focus({ preventScroll: true });
+        feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" });
+      };
+      ch.appendChild(b);
+    });
+    c.appendChild(ch);
+  };
+  render(); addFeed(c);
+}
+const QUICK = {
+  topic: [["ไปต่อเรื่องถัดไป", "เข้าใจแล้ว ไปต่อเรื่องถัดไปเลย"], ["อธิบายอีกแบบ", "ยังไม่ค่อยเข้าใจ ช่วยอธิบายขั้นล่าสุดอีกแบบ ใช้ตัวอย่างหรือภาพช่วย"], ["ขอโจทย์ฝึก", "ขอโจทย์ฝึก 1 ข้อ ให้ฉันลองทำเองก่อน"], ["สรุปทั้งหมด", "ช่วยสรุปทุกอย่างที่เรียนมาบนกระดานแบบสั้นๆ"]],
+  homework: [["ขอคำใบ้", "ขอคำใบ้อีก 1 ข้อ (ยังไม่ต้องเฉลย)"], ["ดูเฉลยเต็ม", "ขอดูวิธีทำเต็มทุกขั้นพร้อมคำตอบสุดท้าย"], ["ไม่เข้าใจขั้นล่าสุด", "ไม่เข้าใจขั้นล่าสุด ช่วยอธิบายใหม่ให้ง่ายกว่านี้"], ["ขอโจทย์คล้ายกัน", "ขอโจทย์คล้ายกัน 1 ข้อไว้ฝึกเอง"]],
+  exam: [["ควิซชุดใหม่", "ขอควิซชุดใหม่ ไม่ซ้ำข้อเดิม"], ["สอนเรื่องที่ยากสุด", "ช่วยสอนเรื่องที่ยากที่สุดในโน้ตนี้อีกรอบบนกระดาน"], ["สูตร/คำสำคัญ", "สรุปสูตรและคำสำคัญทั้งหมดเป็นตารางบนกระดาน"], ["แผนอ่านหนังสือ", "ช่วยทำแผนอ่านหนังสือ 3 วันจากเนื้อหานี้"]]
+};
+function clearQuick() { $("#quick").innerHTML = ""; }
+function renderQuick() {
+  const q = $("#quick"); q.innerHTML = "";
+  if (!L || !L.active || !L.turns.length) return;
+  for (const [label, msg] of QUICK[L.mode] || []) { const b = el("button", "chip", esc(label)); b.type = "button"; b.onclick = () => ask(msg, { display: label }); q.appendChild(b); }
+}
+function setBusy(on) {
+  $("#status").hidden = !on; $("#sendBtn").disabled = on;
+  $("#statusText").textContent = "ครูกำลังคิด… (โจทย์ยากอาจใช้เวลาครึ่งนาที)";
+}
+
+/* ================= welcome / sample ================= */
+const EXAMPLES = {
+  topic: ["ทำไม (a+b)² = a² + 2ab + b²", "แรงลัพธ์และกฎข้อที่ 2 ของนิวตัน", "การสังเคราะห์ด้วยแสงทำงานอย่างไร", "Present perfect ใช้ตอนไหน"],
+  homework: ["แก้สมการ x² − 5x + 6 = 0", "รถวิ่ง 72 กม./ชม. นาน 15 นาที ได้ระยะทางกี่เมตร", "ดุลสมการ Fe + O₂ → Fe₂O₃", "หาพื้นที่สามเหลี่ยมฐาน 8 สูง 5"],
+  exam: ["สรุปเรื่องระบบสุริยะ + ทำควิซ", "ทบทวนพันธะเคมี ม.4", "ทบทวนสงครามโลกครั้งที่ 2"]
+};
+function welcome() {
+  const c = el("div", "card welcome");
+  c.innerHTML = `<h3>ครูกระดานช่วยอะไรได้บ้าง</h3>
+  <ul>
+    <li><b>เรียนหัวข้อ</b> ถามเรื่องอะไรก็ได้ ครูจะพูดอธิบายพร้อมเขียนทีละขั้น แล้วถามเช็กความเข้าใจ</li>
+    <li><b>ช่วยทำการบ้าน</b> พิมพ์หรือถ่ายรูปโจทย์ ครูให้คำใบ้ทีละขั้นให้คุณคิดเอง และเฉลยเต็มเมื่อขอ</li>
+    <li><b>เตรียมสอบ</b> วางโน้ตหรือแนบรูปโน้ต ครูสรุปบนกระดานแล้วทำควิซพร้อมเฉลย</li>
+  </ul>
+  <p class="note" style="text-align:left">บนกระดานตอนนี้คือบทเรียนตัวอย่าง กด ▶ เพื่อดูครูสอนพร้อมเสียง ลองเลือกคำถามด้านล่าง:</p>`;
+  const ch = el("div", "chips"); ch.id = "exChips"; c.appendChild(ch);
+  addFeed(c); renderExamples();
+}
+function renderExamples() {
+  const ch = $("#exChips"); if (!ch) return; ch.innerHTML = "";
+  for (const x of EXAMPLES[S.mode]) { const b = el("button", "chip", esc(x)); b.type = "button"; b.onclick = () => { const i = $("#input"); i.value = x; autoGrow(); i.focus(); }; ch.appendChild(b); }
+}
+const SAMPLE = {
+  title: "ตัวอย่าง: แก้สมการ 2x + 3 = 11",
+  steps: [
+    { say: "มาดูโจทย์กันก่อน เราอยากรู้ว่า x ต้องเป็นเท่าไร สองข้างของสมการถึงจะเท่ากัน", board: [{ k: "h", t: "แก้สมการ $2x + 3 = 11$" }] },
+    { say: "เป้าหมายคือทำให้ x อยู่ตัวเดียว เริ่มจากเอาสามออก ด้วยการลบสามทั้งสองข้าง", board: [{ k: "m", t: "2x + 3 - 3 = 11 - 3" }, { k: "n", c: "r", t: "ทำอะไรกับข้างหนึ่ง ต้องทำกับอีกข้างด้วย" }] },
+    { say: "จะเหลือสองเอ็กซ์เท่ากับแปด ต่อไปหารด้วยสองทั้งสองข้าง", board: [{ k: "m", t: "2x = 8" }, { k: "m", c: "b", t: "\\frac{2x}{2} = \\frac{8}{2}" }] },
+    { say: "ได้ x เท่ากับสี่ ลองตรวจคำตอบ แทนสี่กลับเข้าไป สองคูณสี่บวกสาม ได้สิบเอ็ดพอดี", board: [{ k: "box", c: "g", t: "$x = 4$" }, { k: "w", t: "ตรวจ: $2(4) + 3 = 11$ ✓" }] },
+    { say: "ถ้ามองเป็นกราฟ เส้นตรง y เท่ากับสองเอ็กซ์บวกสาม จะตัดกับเส้น y เท่ากับสิบเอ็ด ตรงที่ x เท่ากับสี่พอดี", board: [{ k: "plot", fns: ["2x+3", "11"], x: [-2, 7], y: [-2, 14], pts: [[4, 11, "(4, 11)"]] }] }
+  ]
+};
+function loadSample() {
+  L = { id: "sample", mode: "topic", subject: "math", level: "lower", title: SAMPLE.title, steps: SAMPLE.steps.map(s => ({ ...s })), turns: [], pending: [], streaming: false, sample: true, active: false };
+  setTitle(SAMPLE.title); $("#panelTitle").textContent = "คุยกับครู";
+  stickBottom = false; content.innerHTML = ""; for (let k = 0; k < L.steps.length; k++) drawStep(k, false);
+  P.cursor = L.steps.length; P.playing = false; renderPlay();
+  $("#sayText").textContent = "บทเรียนตัวอย่าง กด ▶ เพื่อดูครูเขียนและพูดอธิบายทีละขั้น"; $("#stepNo").textContent = `${L.steps.length} ขั้น`;
+  boardEl.scrollTop = 0;
+}
+
+/* ================= history ================= */
+function saveLesson() {
+  if (!L || L.sample) return;
+  const all = store.get("kb-lessons", []).filter(x => x.id !== L.id);
+  all.unshift({ id: L.id, mode: L.mode, subject: L.subject, level: L.level, quizN: L.quizN, title: L.title, created: L.created, steps: L.steps, turns: L.turns.slice(-24) });
+  while (all.length > 30) all.pop();
+  for (let tries = 0; tries < 5 && !store.set("kb-lessons", all) && all.length > 1; tries++) all.splice(Math.ceil(all.length / 2));
+}
+const MODE_TH = { topic: "เรียนหัวข้อ", homework: "การบ้าน", exam: "เตรียมสอบ" };
+function openHistory() {
+  const list = $("#histList"); list.innerHTML = ""; const all = store.get("kb-lessons", []);
+  $("#histEmpty").hidden = all.length > 0;
+  const fmt = new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  all.forEach(x => {
+    const li = el("li", "", `<span class="badge">${esc(MODE_TH[x.mode] || x.mode)}</span><span class="t"><b>${esc(x.title || "ไม่มีชื่อ")}</b><span>${esc(fmt.format(x.created || Date.now()))} · ${x.steps.length} ขั้น</span></span>`);
+    const o = el("button", "btn", "เปิด"); o.type = "button"; o.onclick = () => { $("#histDlg").close(); openLesson(x); };
+    const d = el("button", "icon-btn", '<svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>'); d.type = "button"; d.setAttribute("aria-label", "ลบบทเรียนนี้");
+    d.onclick = () => { if (d.dataset.arm) { store.set("kb-lessons", store.get("kb-lessons", []).filter(y => y.id !== x.id)); li.remove(); $("#histEmpty").hidden = $("#histList").children.length > 0; } else { d.dataset.arm = "1"; d.title = "กดอีกครั้งเพื่อลบ"; d.style.color = "var(--bad)"; } };
+    li.append(o, d); list.appendChild(li);
+  });
+  $("#histDlg").showModal();
+}
+function openLesson(x) {
+  interrupt();
+  L = { ...x, steps: x.steps || [], turns: x.turns || [], pending: [], streaming: false, sample: false, active: true };
+  setMode(x.mode, true); setTitle(L.title);
+  content.innerHTML = ""; ink.clear(); for (let k = 0; k < L.steps.length; k++) drawStep(k, false);
+  P.cursor = L.steps.length; P.playing = false; renderPlay(); updateProgress();
+  const last = L.steps[L.steps.length - 1]; $("#sayText").innerHTML = last ? rich(last.say) : "";
+  feed.innerHTML = ""; addNote(`เปิดบทเรียน “${L.title}” แล้ว ถามต่อได้เลย หรือกด ↺ เพื่อดูครูสอนใหม่ตั้งแต่ต้น`); renderQuick();
+}
+
+/* ================= ink (student writing on the board) ================= */
+const ink = (() => {
+  const cv = $("#ink"), g = cv.getContext("2d"); let strokes = [], cur = null, on = false, color = "k", eraser = false;
+  const colorOf = k => getComputedStyle(document.documentElement).getPropertyValue({ k: "--ink", b: "--ink-b", r: "--ink-r", g: "--ink-g" }[k]).trim() || "#222";
+  function size() { cv.style.width = "0px"; cv.style.height = "0px"; const w = inner.scrollWidth, h = inner.scrollHeight, dpr = devicePixelRatio || 1; if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); redraw(); } cv.style.width = w + "px"; cv.style.height = h + "px"; }
+  function drawStroke(s, ctx = g, dpr = devicePixelRatio || 1, ox = 0, oy = 0, forceColor) {
+    if (s.pts.length < 1) return; ctx.save(); ctx.scale(dpr, dpr); ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.globalCompositeOperation = s.erase ? "destination-out" : "source-over"; ctx.strokeStyle = forceColor || colorOf(s.c); ctx.lineWidth = s.erase ? 22 : 3;
+    ctx.beginPath(); ctx.moveTo(s.pts[0][0] - ox, s.pts[0][1] - oy); for (const [x, y] of s.pts.slice(1)) ctx.lineTo(x - ox, y - oy); if (s.pts.length === 1) ctx.lineTo(s.pts[0][0] - ox + .1, s.pts[0][1] - oy); ctx.stroke(); ctx.restore();
+  }
+  function redraw() { g.clearRect(0, 0, cv.width, cv.height); strokes.forEach(s => drawStroke(s)); }
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener("pointerdown", e => { if (!on) return; e.preventDefault(); cv.setPointerCapture(e.pointerId); cur = { c: color, erase: eraser, pts: [pos(e)] }; strokes.push(cur); drawStroke(cur); });
+  cv.addEventListener("pointermove", e => { if (!cur) return; cur.pts.push(pos(e)); const s = { ...cur, pts: cur.pts.slice(-2) }; drawStroke(s); });
+  const end = () => { cur = null; }; cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+  new ResizeObserver(size).observe(inner); window.addEventListener("resize", size); size();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", redraw);
+  return {
+    toggle(v) { on = v ?? !on; cv.classList.toggle("on", on); return on; },
+    setColor(c) { color = c; eraser = false; }, setEraser(v) { eraser = v; },
+    clear() { strokes = []; redraw(); },
+    has() { return strokes.some(s => !s.erase && s.pts.length); },
+    async toBlob() {
+      const pts = strokes.filter(s => !s.erase).flatMap(s => s.pts); if (!pts.length) return null;
+      const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]); const pad = 24;
+      const x0 = Math.max(0, Math.min(...xs) - pad), y0 = Math.max(0, Math.min(...ys) - pad), x1 = Math.max(...xs) + pad, y1 = Math.max(...ys) + pad;
+      const sc = Math.min(2, 1400 / Math.max(x1 - x0, y1 - y0)); const off = document.createElement("canvas"); off.width = Math.ceil((x1 - x0) * sc); off.height = Math.ceil((y1 - y0) * sc);
+      const og = off.getContext("2d"); og.fillStyle = "#fff"; og.fillRect(0, 0, off.width, off.height);
+      const keep = { k: "#111", b: "#1c54bf", r: "#c2352a", g: "#17784a" };
+      strokes.forEach(s => drawStroke(s, og, sc, x0, y0, s.erase ? "#fff" : keep[s.c]));
+      return new Promise(res => off.toBlob(b => res(b ? new File([b], "board-work.png", { type: "image/png" }) : null), "image/png"));
+    }
+  };
+})();
+
+/* ================= modes & controls ================= */
+function setMode(m, silent) {
+  S.mode = m; saveS();
+  $$(".mode").forEach(b => b.setAttribute("aria-selected", String(b.dataset.mode === m)));
+  $("#examOpts").hidden = m !== "exam";
+  $("#input").placeholder = { topic: "อยากเรียนเรื่องอะไร พิมพ์มาได้เลย…", homework: "พิมพ์โจทย์ หรือกดรูปกล้องเพื่อแนบรูปโจทย์…", exam: "วางโน้ตที่นี่ หรือแนบรูปโน้ต แล้วกดส่ง…" }[m];
+  renderExamples();
+  if (!silent && L && L.active && L.mode !== m) { L.active = false; clearQuick(); addNote(`เปลี่ยนเป็นโหมด “${MODE_TH[m]}” ข้อความถัดไปจะเริ่มบทเรียนใหม่`); }
+}
+$$(".mode").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+$("#subject").value = S.subject; $("#level").value = S.level; $("#quizN").value = S.quizN;
+$("#subject").onchange = e => { S.subject = e.target.value; saveS(); };
+$("#level").onchange = e => { S.level = e.target.value; saveS(); };
+$("#quizN").onchange = e => { S.quizN = e.target.value; saveS(); if (L && L.active) L.quizN = +S.quizN; };
+$("#newBtn").onclick = () => { if (ctl) ctl.abort(); if (L && L.active) saveLesson(); newLesson(); L.active = false; L.turns = []; setTitle(""); feed.innerHTML = ""; addNote(`เริ่มบทเรียนใหม่ในโหมด “${MODE_TH[S.mode]}” พิมพ์คำถามได้เลย`); $("#input").focus(); };
+$("#playBtn").onclick = () => P.playing ? pause() : play();
+$("#nextBtn").onclick = skip; $("#replayBtn").onclick = replay; $("#allBtn").onclick = showAll;
+$("#voiceBtn").onclick = () => { S.voiceOn = !S.voiceOn; saveS(); renderVoice(); if (!S.voiceOn) stopVoice(); };
+$("#stopBtn").onclick = () => { if (ctl) ctl.abort(); };
+$("#histBtn").onclick = openHistory; $("#histClose").onclick = () => $("#histDlg").close();
+
+// pen tools
+$("#penBtn").onclick = () => { const on = ink.toggle(); $("#penBtn").setAttribute("aria-pressed", String(on)); $("#penSet").hidden = !on; };
+$$("[data-pen]").forEach(b => b.onclick = () => { ink.setColor(b.dataset.pen); $$("[data-pen]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); $("#eraserBtn").setAttribute("aria-pressed", "false"); });
+$("#eraserBtn").onclick = () => { const v = $("#eraserBtn").getAttribute("aria-pressed") !== "true"; ink.setEraser(v); $("#eraserBtn").setAttribute("aria-pressed", String(v)); };
+$("#clearInkBtn").onclick = () => ink.clear();
+$("#sendInkBtn").onclick = async () => {
+  if (!ink.has()) { addNote("ยังไม่มีลายมือบนกระดาน ลองเขียนวิธีทำก่อนนะ"); return; }
+  const f = await ink.toBlob(); if (!f) return;
+  const t = $("#input").value.trim(); $("#input").value = ""; autoGrow();
+  ask((t ? t + "\n" : "") + "นี่คือสิ่งที่ฉันเขียนบนกระดาน (ในรูป) ช่วยตรวจว่าถูกไหม ผิดตรงไหน", { images: [f], display: t || "ส่งลายมือบนกระดานให้ครูตรวจ" });
+};
+
+// composer
+let atts = [];
+const input = $("#input");
+function autoGrow() { input.style.height = "auto"; input.style.height = Math.min(180, input.scrollHeight + 2) + "px"; }
+input.addEventListener("input", autoGrow);
+input.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer: fine)").matches) { e.preventDefault(); $("#composer").requestSubmit(); } });
+$("#composer").addEventListener("submit", e => { e.preventDefault(); if (busy) return; const t = input.value; const imgs = atts.slice(); if (!t.trim() && !imgs.length) return; input.value = ""; autoGrow(); atts = []; renderAtts(); ask(t, { images: imgs }); });
+function imagesAllowed() { return V.sample ? !!V.imgLimits : !!S.apiKey; }
+function addFiles(files) {
+  const imgs = [...files].filter(f => f.type.startsWith("image/"));
+  if (!imgs.length) return;
+  if (!imagesAllowed()) { addNote("มุมมองนี้ส่งรูปให้ครูไม่ได้ ลองพิมพ์โจทย์แทนนะ", true); return; }
+  const max = V.sample ? V.imgLimits.maxCount : 5; atts = atts.concat(imgs).slice(0, max); renderAtts();
+}
+function renderAtts() {
+  const box = $("#atts"); box.innerHTML = "";
+  atts.forEach((f, k) => { const d = el("div", "att"); const im = document.createElement("img"); im.alt = "รูปที่แนบ"; im.src = URL.createObjectURL(f); const x = el("button", "", '<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>'); x.type = "button"; x.setAttribute("aria-label", "เอารูปออก"); x.onclick = () => { atts.splice(k, 1); renderAtts(); }; d.append(im, x); box.appendChild(d); });
+}
+$("#fileIn").addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; });
+input.addEventListener("paste", e => { const fs = [...(e.clipboardData?.files || [])]; if (fs.length) { e.preventDefault(); addFiles(fs); } });
+$(".panel").addEventListener("dragover", e => e.preventDefault());
+$(".panel").addEventListener("drop", e => { e.preventDefault(); addFiles(e.dataTransfer.files); });
+
+// dictation
+let dictBase = "";
+$("#micBtn").addEventListener("click", () => {
+  if (V.dict) {
+    if (V.dict.active()) { V.dict.stop().catch(() => {}); return; }
+    dictBase = input.value;
+    V.dict.start().catch(e => { const c = e && e.code; if (c === "not_granted" || c === "unavailable") { $("#micBtn").hidden = true; addNote("ใช้ไมค์ในหน้านี้ไม่ได้ พิมพ์แทนได้เลย"); } else if (c !== "stopped" && c !== "dismissed") addNote("เปิดไมค์ไม่สำเร็จ ลองใหม่อีกครั้ง"); });
+  } else if (V.sr) {
+    if (V.srOn) { V.sr.stop(); return; }
+    V.sr.lang = S.lang === "en" ? "en-US" : "th-TH"; try { V.sr.start(); } catch {}
+  }
+});
+
+// settings dialog
+function openSettings() {
+  const f = $("#setForm");
+  f.querySelectorAll('[name=voice]').forEach(r => r.checked = r.value === S.voice);
+  f.querySelectorAll('[name=lang]').forEach(r => r.checked = r.value === S.lang);
+  f.querySelectorAll('[name=tier]').forEach(r => r.checked = r.value === S.tier);
+  $("#rateIn").value = S.rate; $("#rateVal").textContent = "×" + (+S.rate).toFixed(2);
+  $("#apiKey").value = S.apiKey || ""; $("#apiModel").value = S.apiModel;
+  $("#setDlg").showModal();
+}
+$("#setBtn").onclick = openSettings;
+$("#rateIn").oninput = e => { $("#rateVal").textContent = "×" + (+e.target.value).toFixed(2); };
+$("#setDlg").addEventListener("close", () => {
+  const f = $("#setForm");
+  S.voice = f.querySelector('[name=voice]:checked')?.value || S.voice;
+  S.lang = f.querySelector('[name=lang]:checked')?.value || S.lang;
+  S.tier = f.querySelector('[name=tier]:checked')?.value || S.tier;
+  S.rate = +$("#rateIn").value || 1; S.apiKey = $("#apiKey").value.trim(); S.apiModel = $("#apiModel").value;
+  saveS(); if (V.tts && V.tts.setRate) V.tts.setRate(S.rate).catch(() => {});
+  if (!V.sample) { V.provider = S.apiKey ? "api" : "none"; renderProvider(); }
+});
+
+function renderProvider() {
+  const b = $("#providerBadge");
+  b.textContent = { pending: "กำลังเชื่อมต่อ…", claude: "ใช้ Claude ของคุณ", api: "ใช้ API key", none: "ยังไม่เชื่อมต่อ" }[V.provider];
+  b.title = V.provider === "claude" ? "ใช้บัญชี Claude ของคุณ ไม่ต้องใช้ API key" : V.provider === "none" ? "เปิดหน้านี้ในแอป Claude หรือใส่ API key ในการตั้งค่า" : "";
+  $("#apiField").hidden = V.provider === "claude";
+  $("#attachBtn").hidden = !imagesAllowed() && V.provider !== "pending";
+  $("#sendInkBtn").hidden = !imagesAllowed();
+  renderVoice();
+}
+
+/* ================= capabilities ================= */
+async function initCaps() {
+  const C = window.claude;
+  const use = n => (C && typeof C.use === "function") ? C.use(n).catch(() => null) : Promise.resolve(null);
+  const [smp, tts, dict] = await Promise.all([use("sample"), use("tts"), use("dictation")]);
+  V.sample = smp; V.tts = tts; V.dict = dict;
+  if (smp) { try { const lim = await smp.limits(); V.imgLimits = lim && lim.images || null; } catch { V.imgLimits = null; } }
+  if (tts) {
+    try { V.ttsLangs = await (tts.languages ? tts.languages().catch(() => null) : null); } catch {}
+    tts.onState(({ state, reason }) => { setSpeaking(state === "speaking"); if (state === "idle" && (reason === "not_granted" || reason === "unavailable")) { V.ttsOk = false; renderVoice(); } });
+    if (tts.setRate) tts.setRate(S.rate).catch(() => {});
+  }
+  if (dict) {
+    $("#micBtn").hidden = false;
+    dict.onState(({ state, reason }) => { const on = state !== "idle"; $("#micBtn").setAttribute("aria-pressed", String(on)); $("#dictHint").hidden = !on; if (on) $("#dictHint").textContent = "กำลังฟัง…"; if (state === "idle" && reason === "unavailable") $("#micBtn").hidden = true; });
+    dict.onPartial(({ text }) => { $("#dictHint").textContent = text ? "… " + text : "กำลังฟัง…"; });
+    dict.onFinal(({ text }) => { input.value = (input.value ? input.value + text : text.trimStart()); autoGrow(); });
+  } else {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SR && !(C && C.use)) {
+      const sr = new SR(); sr.interimResults = true; sr.continuous = false; V.sr = sr;
+      sr.onstart = () => { V.srOn = true; $("#micBtn").setAttribute("aria-pressed", "true"); $("#dictHint").hidden = false; $("#dictHint").textContent = "กำลังฟัง…"; dictBase = input.value; };
+      sr.onend = () => { V.srOn = false; $("#micBtn").setAttribute("aria-pressed", "false"); $("#dictHint").hidden = true; };
+      sr.onresult = e => { let fin = "", part = ""; for (const r of e.results) (r.isFinal ? (fin += r[0].transcript) : (part += r[0].transcript)); input.value = (dictBase ? dictBase + " " : "") + fin; $("#dictHint").textContent = part ? "… " + part : "กำลังฟัง…"; autoGrow(); };
+      $("#micBtn").hidden = false;
+    }
+  }
+  V.provider = smp ? "claude" : (S.apiKey ? "api" : "none");
+  renderProvider();
+  if (V.provider === "none") addNote("โหมดออฟไลน์: เปิดหน้านี้ในแอป Claude เพื่อใช้ฟรีผ่านบัญชีของคุณ หรือใส่ API key ในการตั้งค่า");
+}
+
+/* ================= boot ================= */
+try { $("#boardDate").textContent = new Intl.DateTimeFormat("th-TH-u-ca-buddhist", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date()); } catch {}
+setMode(S.mode, true);
+renderVoice(); renderPlay();
+welcome(); loadSample();
+document.addEventListener("keydown", e => {
+  if (e.target.closest("textarea,input,select,dialog,button,label")) return;
+  if (e.key === " " ) { e.preventDefault(); P.playing ? pause() : play(); }
+  else if (e.key === "ArrowRight") skip();
+});
+initCaps();
+})();
+</script>
