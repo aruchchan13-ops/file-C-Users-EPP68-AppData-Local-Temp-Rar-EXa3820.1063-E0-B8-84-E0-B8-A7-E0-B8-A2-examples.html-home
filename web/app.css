@@ -1,34 +1,32 @@
-/* Layout: a classroom wall. The board dominates the left (whiteboard in light, chalkboard in dark);
-   a notebook-like side panel holds the conversation, checks and quizzes. */
+/* Layout: a classroom wall. A black chalkboard dominates the left in every theme;
+   a clean side panel holds the conversation. Site palette: white, black and blue only. */
 :root{
-  --bg:#eceee9; --surface:#ffffff; --surface-2:#f3f5f1; --fg:#1b221e; --muted:#5b665f; --line:#d5dad2;
-  --accent:#1f6b57; --accent-soft:#dfeee7; --accent-fg:#ffffff;
-  --frame:#c3c9c0; --frame-hi:#dfe3dc;
-  --board:#fbfbf7; --board-smudge:rgba(40,70,60,.035); --board-muted:#7d8a83;
-  --ink:#1f2a33; --ink-b:#1c54bf; --ink-r:#c2352a; --ink-g:#17784a; --ink-y:#ad6800;
-  --ok:#17784a; --ok-soft:#e2f2e7; --bad:#c2352a; --bad-soft:#f8e3df;
-  --shadow:0 1px 2px rgba(20,30,25,.06),0 10px 28px rgba(20,30,25,.07);
+  /* site: white / black / blue */
+  --bg:#f3f5f9; --surface:#ffffff; --surface-2:#f1f4f8; --fg:#0b0d12; --muted:#586174; --line:#dce1e9;
+  --accent:#1d4ed8; --accent-soft:#e7eefd; --accent-fg:#ffffff;
+  --ok:#15803d; --ok-soft:#e6f4ea; --bad:#c62828; --bad-soft:#fbe8e8;
+  --shadow:0 1px 2px rgba(10,15,30,.06),0 10px 28px rgba(10,15,30,.08);
+  /* chalkboard: the same in light and dark */
+  --frame:#23262c; --frame-hi:#383c44;
+  --board:#16181c; --board-smudge:rgba(255,255,255,.045); --board-muted:#98a1b0;
+  --ink:#f2f3ee; --ink-b:#8fc3ff; --ink-r:#ff9d90; --ink-g:#a8e3a3; --ink-y:#ffd77c;
   --f-ui:"Anuphan","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;
   --f-board:"Sriracha","Anuphan","Comic Sans MS",cursive;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111613; --surface:#181e1a; --surface-2:#1f2622; --fg:#e6ebe5; --muted:#9aa69e; --line:#2c3530;
-  --accent:#6fc6a6; --accent-soft:#1d3029; --accent-fg:#0b1913;
-  --frame:#5d4530; --frame-hi:#77593d;
-  --board:#22342b; --board-smudge:rgba(255,255,255,.035); --board-muted:#9db3a6;
-  --ink:#f1efe4; --ink-b:#93c8ff; --ink-r:#ff9d8c; --ink-g:#a9e4a3; --ink-y:#ffd57a;
-  --ok:#7fd69a; --ok-soft:#1c3125; --bad:#ff9d8c; --bad-soft:#3a2220;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.3);
+  --bg:#06070a; --surface:#0f1116; --surface-2:#171a20; --fg:#f5f7fa; --muted:#99a2b2; --line:#252932;
+  --accent:#5b8cff; --accent-soft:#14203d; --accent-fg:#05070c;
+  --ok:#6fd38f; --ok-soft:#12271a; --bad:#ff8f86; --bad-soft:#2e1517;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.4);
+  --frame:#2a2e35; --frame-hi:#40454e;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#111613; --surface:#181e1a; --surface-2:#1f2622; --fg:#e6ebe5; --muted:#9aa69e; --line:#2c3530;
-  --accent:#6fc6a6; --accent-soft:#1d3029; --accent-fg:#0b1913;
-  --frame:#5d4530; --frame-hi:#77593d;
-  --board:#22342b; --board-smudge:rgba(255,255,255,.035); --board-muted:#9db3a6;
-  --ink:#f1efe4; --ink-b:#93c8ff; --ink-r:#ff9d8c; --ink-g:#a9e4a3; --ink-y:#ffd57a;
-  --ok:#7fd69a; --ok-soft:#1c3125; --bad:#ff9d8c; --bad-soft:#3a2220;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.3);
+  --bg:#06070a; --surface:#0f1116; --surface-2:#171a20; --fg:#f5f7fa; --muted:#99a2b2; --line:#252932;
+  --accent:#5b8cff; --accent-soft:#14203d; --accent-fg:#05070c;
+  --ok:#6fd38f; --ok-soft:#12271a; --bad:#ff8f86; --bad-soft:#2e1517;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.4);
+  --frame:#2a2e35; --frame-hi:#40454e;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -61,8 +59,9 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 /* ---------- main ---------- */
 .app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,400px);gap:16px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .board-wrap{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
-.board-frame{position:relative;flex:1;min-height:0;padding:10px;border-radius:14px;background:linear-gradient(160deg,var(--frame-hi),var(--frame));box-shadow:var(--shadow);display:flex;flex-direction:column}
-.board{position:relative;flex:1;min-height:0;overflow:auto;border-radius:6px;background:var(--board);background-image:radial-gradient(ellipse at 20% 30%,var(--board-smudge),transparent 55%),radial-gradient(ellipse at 80% 75%,var(--board-smudge),transparent 50%);color:var(--ink)}
+.board-frame{position:relative;flex:1;min-height:0;padding:10px 10px 16px;border-radius:14px;background:linear-gradient(160deg,var(--frame-hi),var(--frame));box-shadow:var(--shadow);display:flex;flex-direction:column}
+.board{position:relative;flex:1;min-height:0;overflow:auto;border-radius:6px;background:var(--board);background-image:radial-gradient(ellipse at 20% 30%,var(--board-smudge),transparent 55%),radial-gradient(ellipse at 80% 75%,var(--board-smudge),transparent 50%),radial-gradient(ellipse at 55% 10%,var(--board-smudge),transparent 40%);color:var(--ink);color-scheme:dark;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),inset 0 2px 12px rgba(0,0,0,.5)}
+.board-frame::after{content:"";position:absolute;left:18px;right:18px;bottom:5px;height:5px;border-radius:3px;background:var(--frame-hi);opacity:.8}
 .board-inner{position:relative;min-height:100%;padding:18px clamp(16px,3vw,32px) 72px}
 .board-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 16px;flex-wrap:wrap;font-family:var(--f-board);color:var(--board-muted);font-size:15px;margin-bottom:8px}
 .board-head .lt{color:var(--ink);font-size:17px;min-width:0}
