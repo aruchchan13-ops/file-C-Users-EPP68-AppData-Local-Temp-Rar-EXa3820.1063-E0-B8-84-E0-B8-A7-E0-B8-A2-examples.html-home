@@ -1,0 +1,153 @@
+@import '@fontsource/ibm-plex-sans-thai/thai-400.css';
+@import '@fontsource/ibm-plex-sans-thai/thai-500.css';
+@import '@fontsource/ibm-plex-sans-thai/thai-600.css';
+@import '@fontsource/ibm-plex-sans-thai/thai-700.css';
+@import '@fontsource/ibm-plex-sans-thai/latin-400.css';
+@import '@fontsource/ibm-plex-sans-thai/latin-500.css';
+@import '@fontsource/ibm-plex-sans-thai/latin-600.css';
+@import '@fontsource/ibm-plex-sans-thai/latin-700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens — team palette
+ *  brand    #13294B  hero, primary buttons, Pro tag, footer
+ *  hover    #1E3D6F  primary button hover
+ *  page     #FFFFFF  page background
+ *  alt      #F2F4F8  alternating sections
+ *  ink      #0E1B33  body text
+ *  muted    #44506A  descriptions, small text
+ *  link     #1F4C94  links and reference numbers
+ *  danger   #B3261E  "หยุดก่อน", high risk
+ *  caution  #7A4F00 on #FFF3D6  "ควรระวัง", "จำลอง" tag
+ *  safe     #1A6340 on #E3F3EA  "ความเสี่ยงต่ำ", saved successfully
+ */
+:root {
+  --c-brand: 19 41 75;
+  --c-brand-hover: 30 61 111;
+  --c-page: 255 255 255;
+  --c-alt: 242 244 248;
+  --c-ink: 14 27 51;
+  --c-ink-muted: 68 80 106;
+  --c-link: 31 76 148;
+  --c-line: 214 220 231;
+  --c-danger: 179 38 30;
+  --c-danger-bg: 252 236 234;
+  --c-caution: 122 79 0;
+  --c-caution-bg: 255 243 214;
+  --c-safe: 26 99 64;
+  --c-safe-bg: 227 243 234;
+  color-scheme: light;
+}
+
+/* High-contrast mode (coping workflow): darker text, solid borders. */
+:root[data-contrast='high'] {
+  --c-ink: 0 0 0;
+  --c-ink-muted: 22 28 40;
+  --c-line: 14 27 51;
+  --c-link: 10 52 128;
+  --c-alt: 236 239 245;
+}
+:root[data-contrast='high'] .card,
+:root[data-contrast='high'] .field {
+  border-width: 2px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  @apply bg-page text-ink font-sans antialiased;
+  line-height: 1.65; /* Thai stacked vowels/tone marks need extra leading */
+}
+
+/* Visible focus for keyboard users, on light and navy surfaces. */
+:focus-visible {
+  outline: 3px solid rgb(var(--c-link));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.on-brand :focus-visible {
+  outline-color: #fff;
+}
+/* #main and the tour heading receive programmatic focus for screen readers; no ring needed */
+#main:focus,
+#main:focus-visible,
+#tour-title:focus,
+#tour-title:focus-visible {
+  outline: none;
+}
+
+@layer components {
+  .card {
+    @apply bg-page border border-line rounded-xl;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-4 rounded-lg font-semibold text-[0.95rem] transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-brand-hover;
+  }
+  .btn-secondary {
+    @apply btn bg-page text-brand border border-brand/40 hover:bg-alt;
+  }
+  .btn-ghost {
+    @apply btn text-link hover:bg-alt;
+  }
+  .btn-danger {
+    @apply btn bg-page text-danger border border-danger/50 hover:bg-danger-bg;
+  }
+  .field {
+    @apply w-full min-h-[44px] rounded-lg border border-ink-muted/50 bg-page px-3 py-2 text-ink;
+  }
+  .label {
+    @apply block text-sm font-semibold text-ink mb-1;
+  }
+  .hint {
+    @apply text-sm text-ink-muted;
+  }
+  .link {
+    @apply text-link underline underline-offset-2 hover:no-underline;
+  }
+  .tag {
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold whitespace-nowrap;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Range slider sized for touch. */
+input[type='range'] {
+  accent-color: rgb(var(--c-brand));
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
