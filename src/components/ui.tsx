@@ -8,7 +8,7 @@ export function PageHeader({ title, en, description, actions }: { title: string;
       <div className="min-w-0">
         <h1 className="text-2xl font-bold leading-tight text-ink sm:text-[1.75rem]">
           {title}
-          {en && <span className="ml-2 align-middle text-base font-medium text-ink-muted">{en}</span>}
+          {en && <span className="ml-2 inline-block whitespace-nowrap align-middle text-base font-medium text-ink-muted">{en}</span>}
         </h1>
         {description && <p className="mt-1 max-w-3xl text-ink-muted">{description}</p>}
       </div>
@@ -50,7 +50,7 @@ export function SourceBadge({ source }: { source: Source }) {
   return source === 'synthetic' ? (
     <SimulatedTag />
   ) : (
-    <span className="tag bg-alt text-brand border border-brand/30">
+    <span className="tag bg-alt text-brand-ink border border-brand-ink/30">
       <svg aria-hidden width="10" height="10" viewBox="0 0 10 10">
         <circle cx="5" cy="5" r="4" fill="currentColor" />
       </svg>

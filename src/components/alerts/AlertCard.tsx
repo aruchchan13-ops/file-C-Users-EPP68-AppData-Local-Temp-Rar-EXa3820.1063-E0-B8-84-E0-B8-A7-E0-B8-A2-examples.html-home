@@ -12,28 +12,29 @@ export function AlertCard({ showLinks = true }: { showLinks?: boolean }) {
   const s = LEVEL_STYLE[current.level];
   const today = series.find((d) => d.day === day);
   return (
-    <section aria-labelledby="alert-title" className={`rounded-xl border-2 ${s.border} ${s.bg} p-4 sm:p-5`} data-alert-level={current.level}>
-      <div className="flex flex-wrap items-center gap-3">
-        <AlertShape level={current.level} size={34} />
-        <div>
-          <p className={`text-sm font-semibold ${s.text}`}>
-            สถานะเตือน · {meta.en} ({meta.shape})
-          </p>
-          <h2 id="alert-title" className={`text-2xl font-bold ${s.text}`}>
-            {meta.label}
-          </h2>
-        </div>
+    <section aria-labelledby="alert-title" className={`rounded-xl border-2 ${s.border} ${s.bg} p-4 shadow-card sm:p-6`} data-alert-level={current.level}>
+      <div className="flex items-start gap-3 sm:gap-4">
+        <span className="mt-0.5 shrink-0">
+          <AlertShape level={current.level} size={36} />
+        </span>
+        <h2 id="alert-title" className={`flex flex-wrap items-baseline gap-x-3 gap-y-1 text-2xl font-bold leading-snug ${s.text}`}>
+          <span>{meta.label}</span>
+          <span className={`rounded-md border ${s.border} px-2 py-0.5 text-sm font-semibold tracking-wide`}>
+            {meta.en}
+            <span className="sr-only"> (สัญลักษณ์{meta.shape})</span>
+          </span>
+        </h2>
       </div>
-      <div className="mt-3 space-y-3 text-ink">
+      <div className="mt-4 space-y-4 text-ink">
         <div>
           <p className="text-sm font-semibold">เหตุผล (ตัวเลขจริงจากข้อมูล):</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5 text-[0.95rem]">
+          <ul className="mt-1 max-w-[80ch] list-disc space-y-1 pl-5 text-[0.95rem]">
             {currentReasons.map((r) => (
               <li key={r}>{r}</li>
             ))}
           </ul>
         </div>
-        <dl className="num grid gap-2 rounded-lg bg-page/80 p-3 text-sm sm:grid-cols-3">
+        <dl className="num grid gap-2 rounded-lg bg-surface/80 p-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-ink-muted">คะแนนวันนี้ ({dayLabel(day)})</dt>
             <dd className="font-semibold">{today?.composite === null || today?.composite === undefined ? 'ไม่มีการวัด' : `${pct(today.composite)} ของ baseline`}</dd>
@@ -49,7 +50,7 @@ export function AlertCard({ showLinks = true }: { showLinks?: boolean }) {
         </dl>
         <div>
           <p className="text-sm font-semibold">สิ่งที่ควรทำต่อไป:</p>
-          <p className="text-[0.95rem]">{meta.action}</p>
+          <p className="max-w-[75ch] text-[0.95rem]">{meta.action}</p>
         </div>
         {showLinks && (
           <div className="flex flex-wrap gap-2 pt-1">

@@ -27,10 +27,10 @@ function OfflineBadge() {
   const online = useOnline();
   return online ? (
     <span className="tag bg-white/10 text-white/90" title="เชื่อมต่ออินเทอร์เน็ต — แอปไม่ได้ส่งข้อมูลออก">
-      <span aria-hidden className="h-2 w-2 rounded-full bg-[#7FD1A4]" /> ออนไลน์
+      <span aria-hidden className="h-2 w-2 rounded-full bg-[#7FD1A4] ring-2 ring-[#7FD1A4]/25" /> ออนไลน์
     </span>
   ) : (
-    <span className="tag bg-[#FFF3D6] text-[#7A4F00]" role="status">
+    <span className="tag bg-caution-bg text-caution" role="status">
       <Icon name="wifiOff" size={14} /> ออฟไลน์ — ทำงานได้ตามปกติ
     </span>
   );
@@ -40,7 +40,7 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation();
   const { start } = useGuidedDemo();
   const linkCls = (active: boolean) =>
-    `flex min-h-[44px] items-center gap-3 rounded-lg px-3 text-[0.95rem] ${active ? 'bg-white text-brand font-semibold' : 'text-white/90 hover:bg-white/10'}`;
+    `flex min-h-[44px] items-center gap-3 rounded-lg px-3 text-[0.95rem] ${active ? 'bg-on-chrome text-on-chrome-fg font-semibold' : 'text-white/90 hover:bg-white/10'}`;
   return (
     <nav aria-label="เมนูหลัก" className="on-brand flex flex-col gap-1">
       <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-white/60">หลัก</p>
@@ -100,12 +100,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen lg:pl-64">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-page focus:px-4 focus:py-2 focus:text-link">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-link">
         ข้ามไปเนื้อหาหลัก
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto bg-brand px-3 py-4 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto bg-chrome px-3 py-4 lg:flex">
         <div className="on-brand mb-4 px-2">
           <Brand />
           <p className="mt-1 text-xs text-white/70">Astronaut Eye Health · NASA Space Apps 2026</p>
@@ -117,7 +117,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Top bar (mobile/tablet) */}
-      <header className="on-brand sticky top-0 z-30 flex items-center justify-between gap-2 bg-brand px-4 py-2 lg:hidden no-print">
+      <header className="on-brand sticky top-0 z-30 flex items-center justify-between gap-2 bg-chrome px-4 py-2 lg:hidden no-print">
         <Brand />
         <div className="flex items-center gap-2">
           <OfflineBadge />
@@ -138,7 +138,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {menuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="เมนูทั้งหมด" id="mobile-menu">
           <button type="button" aria-label="ปิดเมนู" className="absolute inset-0 bg-ink/50" onClick={() => setMenuOpen(false)} />
-          <div className="absolute inset-y-0 right-0 w-[min(20rem,88vw)] overflow-y-auto bg-brand px-3 py-4">
+          <div className="absolute inset-y-0 right-0 w-[min(20rem,88vw)] overflow-y-auto bg-chrome px-3 py-4">
             <div className="on-brand mb-2 flex items-center justify-between px-2">
               <Brand />
               <button type="button" className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white hover:bg-white/10" aria-label="ปิดเมนู" onClick={() => setMenuOpen(false)} autoFocus>
@@ -156,7 +156,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <footer className="on-brand bg-brand px-4 py-6 pb-28 text-sm text-white/85 sm:px-6 lg:pb-6 no-print">
+      <footer className="on-brand bg-chrome px-4 py-6 pb-28 text-sm text-white/85 sm:px-6 lg:pb-6 no-print">
         <div className="mx-auto max-w-content space-y-1">
           <p className="font-semibold text-white">EyeReady · NASA Space Apps Challenge 2026</p>
           <p>
@@ -172,7 +172,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </footer>
 
       {/* Bottom navigation (mobile) — the five primary areas */}
-      <nav aria-label="เมนูหลัก (มือถือ)" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-page pb-[env(safe-area-inset-bottom)] lg:hidden no-print">
+      <nav aria-label="เมนูหลัก (มือถือ)" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden no-print">
         <ul className="grid grid-cols-5">
           {PRIMARY_NAV.map((n) => {
             const active = isActive(pathname, n.to);
@@ -181,11 +181,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link
                   to={n.to}
                   aria-current={active ? 'page' : undefined}
-                  className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-1 text-[0.72rem] leading-tight ${active ? 'font-semibold text-brand' : 'text-ink-muted'}`}
+                  className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-1 text-[0.72rem] leading-tight ${active ? 'font-semibold text-brand-ink' : 'text-ink-muted'}`}
                 >
                   <Icon name={n.icon} size={22} />
                   <span>{n.label}</span>
-                  {active && <span aria-hidden className="mt-0.5 h-0.5 w-6 rounded bg-brand" />}
+                  {active && <span aria-hidden className="mt-0.5 h-0.5 w-6 rounded bg-brand-ink" />}
                 </Link>
               </li>
             );
@@ -204,8 +204,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Icon name={t.tone === 'error' ? 'info' : 'check'} size={18} />
             <span className="font-medium">{t.message}</span>
-            <button type="button" className="ml-2 rounded px-1 text-current/80 hover:underline" onClick={() => dismiss(t.id)} aria-label="ปิดข้อความ">
-              ✕
+            <button type="button" className="-my-1 ml-1 inline-flex h-8 w-8 items-center justify-center rounded-md opacity-80 hover:bg-black/5 hover:opacity-100" onClick={() => dismiss(t.id)} aria-label="ปิดข้อความ">
+              <Icon name="close" size={16} />
             </button>
           </div>
         ))}

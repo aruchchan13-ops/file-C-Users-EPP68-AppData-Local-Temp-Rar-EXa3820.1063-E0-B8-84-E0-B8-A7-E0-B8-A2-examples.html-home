@@ -24,7 +24,7 @@ export function LessonsPage() {
           const isDone = completedLessons.includes(l.id);
           return (
             <li key={l.id}>
-              <Link to={`/training/lessons/${l.id}`} className="card flex h-full flex-col p-5 hover:border-brand">
+              <Link to={`/training/lessons/${l.id}`} className="card flex h-full flex-col p-5 hover:border-brand-ink">
                 <span className="text-sm font-semibold text-link">บทที่ {i + 1} · ~{l.minutes} นาที</span>
                 <span className="mt-1 text-lg font-semibold text-ink">{l.title}</span>
                 <span className="text-sm text-ink-muted">{l.en}</span>
@@ -75,7 +75,7 @@ export function LessonPage() {
           ← {fromPlan ? 'แผนฝึกประจำวัน' : 'บทเรียนทั้งหมด'}
         </Link>
       </nav>
-      <PageHeader title={lesson.title} en={lesson.en} description={`~${lesson.minutes} นาที · ${isDone ? 'เรียนแล้ว ✓' : 'ยังไม่เรียน'}`} />
+      <PageHeader title={lesson.title} en={lesson.en} description={`~${lesson.minutes} นาที · ${isDone ? 'เรียนแล้ว' : 'ยังไม่เรียน'}`} />
       <Card>
         <p className="num text-sm text-ink-muted" aria-live="polite">
           การ์ด {card + 1}/{lesson.cards.length}

@@ -19,10 +19,15 @@ const PATHS: Record<string, string> = {
   wifiOff: 'M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.7M19 13a10 10 0 0 0-2.3-1.6M2 9.5a15 15 0 0 1 4.2-2.6M22 9.5A15 15 0 0 0 12 5.5M12 20h.01',
   check: 'M5 12.5l4.5 4.5L19 7',
   chevron: 'M9 6l6 6-6 6',
+  triangle: 'M12 4 21.5 20h-19z',
+  circle: 'M12 4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z',
+  minus: 'M6 12h12',
+  arrowUp: 'M12 19V5m0 0-6 6m6-6 6 6',
+  arrowDown: 'M12 5v14m0 0-6-6m6 6 6-6',
 };
 
 export function Icon({ name, size = 22, className = '' }: { name: keyof typeof PATHS | string; size?: number; className?: string }) {
-  const filled = ['play'].includes(name);
+  const filled = ['play', 'triangle'].includes(name);
   return (
     <svg
       aria-hidden

@@ -6,6 +6,7 @@ import { SYMPTOM_LABEL } from '../../hooks/useSurgeonSummary';
 import { db, safeWrite } from '../../services/database';
 import { isSymptomDay, occurrencesByDay, RELEVANT_SYMPTOMS } from '../../services/alertService';
 import { Card, EmptyState, Notice, PageHeader, SourceBadge } from '../../components/ui';
+import { Icon } from '../../components/layout/Icon';
 import { dateForMissionDay, dateTime } from '../../utils/format';
 
 interface Draft {
@@ -122,7 +123,7 @@ export function SymptomLogPage() {
               <legend className="label">ประเภทอาการ</legend>
               <div className="grid grid-cols-2 gap-2">
                 {SYMPTOM_CATEGORIES.map((c) => (
-                  <label key={c} className={`flex min-h-[44px] cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${draft.category === c ? 'border-brand bg-alt font-semibold' : 'border-line'}`}>
+                  <label key={c} className={`flex min-h-[44px] cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${draft.category === c ? 'border-brand-ink bg-alt font-semibold' : 'border-line'}`}>
                     <input id={`sym-category-${c}`} type="radio" name="category" value={c} checked={draft.category === c} onChange={() => setDraft({ ...draft, category: c })} className="h-4 w-4 accent-[rgb(var(--c-brand))]" />
                     {SYMPTOM_LABEL[c]}
                   </label>
@@ -233,7 +234,13 @@ export function SymptomLogPage() {
                     </th>
                     {week.map((d) => (
                       <td key={d} className="px-2 py-1.5">
-                        {isSymptomDay(occ, d) ? <span className="tag bg-caution-bg text-caution">▲ ใช่</span> : <span className="text-ink-muted">–</span>}
+                        {isSymptomDay(occ, d) ? (
+                          <span className="tag bg-caution-bg text-caution">
+                            <Icon name="triangle" size={10} /> ใช่
+                          </span>
+                        ) : (
+                          <span className="text-ink-muted">·</span>
+                        )}
                       </td>
                     ))}
                   </tr>

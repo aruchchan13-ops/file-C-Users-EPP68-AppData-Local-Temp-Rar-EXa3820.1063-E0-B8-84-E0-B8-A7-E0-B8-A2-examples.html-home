@@ -27,7 +27,7 @@ export function TrainingPage() {
     <div>
       <PageHeader title="การฝึกและการวัด" en="Training" description="แบบทดสอบการมองเห็น 4 แบบ สถานการณ์ฝึก 6 เรื่อง และบทเรียนสั้น — ผลทั้งหมดเก็บในเครื่องนี้" />
 
-      <section className="mb-6 overflow-hidden rounded-xl bg-brand text-white on-brand" aria-labelledby="plan-title">
+      <section className="mb-6 overflow-hidden rounded-xl bg-chrome text-white shadow-card on-brand" aria-labelledby="plan-title">
         <div className="flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="min-w-0">
             <h2 id="plan-title" className="text-xl font-bold">
@@ -38,12 +38,12 @@ export function TrainingPage() {
               {plan.fatigueHigh && ' · ลดภาระเพราะความล้าสูง'}
             </p>
           </div>
-          <Link to="/training/plan" className="btn bg-white text-brand hover:bg-alt">
+          <Link to="/training/plan" className="btn-on-chrome">
             เปิดแผนวันนี้ <Icon name="chevron" size={18} />
           </Link>
         </div>
         <div className="h-2 bg-white/20" aria-hidden>
-          <div className="h-full bg-white" style={{ width: `${plan.percent}%` }} />
+          <div className="h-full bg-on-chrome" style={{ width: `${plan.percent}%` }} />
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMission } from '../../hooks/useMission';
-import { useUi, type TextScale } from '../../hooks/useUi';
+import { useUi, type TextScale, type ThemePref } from '../../hooks/useUi';
 import { useInstallPrompt } from '../../hooks/useOnline';
 import { clearDataset } from '../../services/database';
 import { Card, Notice, PageHeader } from '../../components/ui';
@@ -10,7 +10,7 @@ const CARD_MM = 85.6; // ISO/IEC 7810 ID-1 card width
 
 export function SettingsPage() {
   const { prefs, updatePrefs, isDemo } = useMission();
-  const { textScale, setTextScale, highContrast, setHighContrast, toast } = useUi();
+  const { textScale, setTextScale, highContrast, setHighContrast, theme, setTheme, resolvedTheme, toast } = useUi();
   const { canInstall, installed, install } = useInstallPrompt();
   const { start } = useGuidedDemo();
   const [cardPx, setCardPx] = useState(Math.round(prefs.pxPerMm * CARD_MM));
@@ -41,7 +41,7 @@ export function SettingsPage() {
                 ['personal', 'ข้อมูลของฉัน', 'บันทึกผลจริงของคุณ เริ่มสร้าง baseline จากการวัด 3 วันแรก'],
               ] as const
             ).map(([v, t, d]) => (
-              <label key={v} className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 ${prefs.mode === v ? 'border-brand bg-alt' : 'border-line'}`}>
+              <label key={v} className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 ${prefs.mode === v ? 'border-brand-ink bg-alt' : 'border-line'}`}>
                 <input type="radio" name="mode" className="mt-1 h-5 w-5 accent-[rgb(var(--c-brand))]" checked={prefs.mode === v} onChange={() => updatePrefs({ mode: v })} />
                 <span>
                   <span className="block font-semibold text-ink">{t}</span>
@@ -78,6 +78,23 @@ export function SettingsPage() {
       </Card>
 
       <Card title="การแสดงผล (ช่วยเมื่อมองไม่ชัด)" id="display">
+        <fieldset className="mb-5">
+          <legend className="label">ธีม</legend>
+          <div className="flex flex-wrap gap-2">
+            {(
+              [
+                ['system', 'ตามระบบ'],
+                ['light', 'สว่าง'],
+                ['dark', 'มืด (แสงน้อย)'],
+              ] as [ThemePref, string][]
+            ).map(([v, l]) => (
+              <button key={v} type="button" aria-pressed={theme === v} onClick={() => setTheme(v)} className={`btn ${theme === v ? 'bg-brand text-white' : 'border border-line text-ink hover:bg-alt'}`}>
+                {l}
+              </button>
+            ))}
+          </div>
+          <p className="hint mt-1">ตอนนี้ใช้ธีม{resolvedTheme === 'dark' ? 'มืด' : 'สว่าง'} · พื้นที่แบบทดสอบสายตายังเป็นพื้นขาวเสมอเพื่อให้ผลวัดเทียบกันได้</p>
+        </fieldset>
         <fieldset>
           <legend className="label">ขนาดตัวอักษร</legend>
           <div className="flex flex-wrap gap-2">

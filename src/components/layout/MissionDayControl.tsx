@@ -58,13 +58,13 @@ export function MissionDayControl() {
                   type="button"
                   onClick={() => setDay(d)}
                   aria-pressed={day === d}
-                  className={`num min-h-[40px] rounded-lg px-3 text-sm font-semibold ${day === d ? 'bg-brand text-white' : 'border border-line bg-page text-brand hover:bg-alt'}`}
+                  className={`num min-h-[40px] rounded-lg px-3 text-sm font-semibold ${day === d ? 'bg-brand text-white' : 'border border-line bg-surface text-brand-ink hover:bg-alt'}`}
                 >
                   Day {d}
                 </button>
               ))
             ) : (
-              <button type="button" onClick={() => setDay(Math.min(maxDay, todayDay))} className="min-h-[40px] rounded-lg border border-line bg-page px-3 text-sm font-semibold text-brand hover:bg-alt">
+              <button type="button" onClick={() => setDay(Math.min(maxDay, todayDay))} className="min-h-[40px] rounded-lg border border-line bg-surface px-3 text-sm font-semibold text-brand-ink hover:bg-alt">
                 วันนี้ (วันที่ {todayDay})
               </button>
             )}

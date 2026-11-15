@@ -59,14 +59,14 @@ export function DailyPlanPage() {
               <p className="num text-ink">
                 ทำแล้ว <strong>{plan.doneCount}</strong> จาก {plan.items.length} รายการ
               </p>
-              <span className="tag bg-alt text-brand">ระดับความยาก {plan.level}/5</span>
+              <span className="tag bg-alt text-brand-ink">ระดับความยาก {plan.level}/5</span>
             </div>
             <div className="mt-3">
               <ProgressBar value={plan.percent} label="ความคืบหน้าแผนวันนี้" />
             </div>
             {plan.fatigueHigh && (
               <p className="mt-3 rounded-lg bg-caution-bg px-3 py-2 text-sm text-caution">
-                ▲ ความล้าวันนี้ {plan.fatigue}/10 (≥ {FATIGUE_HIGH}) — ลดแผนเหลือ {plan.budget} นาที เน้นเฉพาะการวัดที่สำคัญที่สุด
+                <Icon name="triangle" size={14} className="mr-1 inline align-[-2px]" />ความล้าวันนี้ {plan.fatigue}/10 (≥ {FATIGUE_HIGH}) — ลดแผนเหลือ {plan.budget} นาที เน้นเฉพาะการวัดที่สำคัญที่สุด
               </p>
             )}
             {plan.buildingBaseline && <p className="mt-3 text-sm text-ink-muted">ช่วงสร้าง baseline: แผนจะให้วัดครบทั้ง 4 แบบจนมีข้อมูล 3 วัน</p>}
@@ -77,8 +77,8 @@ export function DailyPlanPage() {
               <li key={it.id} id={it.kind === 'check' ? 'check' : undefined}>
                 <div className={`card p-4 ${it.done ? 'border-safe/50' : ''}`}>
                   <div className="flex flex-wrap items-start gap-3">
-                    <span aria-hidden className={`num flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold ${it.done ? 'bg-safe text-white' : 'bg-alt text-brand'}`}>
-                      {it.done ? '✓' : i + 1}
+                    <span aria-hidden className={`num flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold ${it.done ? 'bg-safe text-white' : 'bg-alt text-brand-ink'}`}>
+                      {it.done ? <Icon name="check" size={18} /> : i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
                       <h2 className="font-semibold text-ink">
@@ -124,7 +124,7 @@ export function DailyPlanPage() {
           </ol>
 
           {allDone && (
-            <Card title="สรุปวันนี้ ✓" id="summary">
+            <Card title="สรุปวันนี้ — ทำแผนครบแล้ว" id="summary">
               <p className="text-ink">ทำแผนครบแล้ว ขอบคุณที่ช่วยเก็บข้อมูลอย่างสม่ำเสมอ</p>
               <dl className="num mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                 <div>
@@ -169,7 +169,7 @@ export function DailyPlanPage() {
               <ul className="num mt-2 space-y-1 text-sm text-ink-muted">
                 {recentChanges.map((s) => (
                   <li key={s.day}>
-                    D{s.day}: {s.change === 'up' ? '▲' : '▼'} ระดับ {s.level} — {s.reason}
+                    <Icon name={s.change === 'up' ? 'arrowUp' : 'arrowDown'} size={14} className="mr-1 inline align-[-2px]" />D{s.day}: ระดับ {s.level} — {s.reason}
                   </li>
                 ))}
               </ul>

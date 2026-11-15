@@ -101,7 +101,11 @@ export function AmslerTest({ onComplete }: { onComplete: (raw: number, details: 
                           <rect width="100%" height="100%" fill="url(#hatch)" />
                         </svg>
                       )}
-                      {on && <span aria-hidden className="absolute inset-0 flex items-center justify-center text-sm font-bold text-danger">✕</span>}
+                      {on && (
+                        <svg aria-hidden viewBox="0 0 10 10" className="absolute left-1/2 top-1/2 h-1/3 w-1/3 -translate-x-1/2 -translate-y-1/2 text-[#B3261E]">
+                          <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                      )}
                     </button>
                   );
                 })}

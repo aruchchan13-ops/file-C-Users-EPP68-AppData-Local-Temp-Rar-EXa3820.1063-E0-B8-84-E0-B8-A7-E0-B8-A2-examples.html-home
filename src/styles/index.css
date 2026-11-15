@@ -12,22 +12,27 @@
 @tailwind utilities;
 
 /*
- * Design tokens — team palette
- *  brand    #13294B  hero, primary buttons, Pro tag, footer
+ * Design tokens — team palette (light) and its low-light counterpart (dark).
+ *  chrome   #13294B  sidebar, top bar, hero, footer (navy in both themes)
+ *  brand    #13294B  primary buttons, selected state, Pro tag (fills; white text)
  *  hover    #1E3D6F  primary button hover
- *  page     #FFFFFF  page background
- *  alt      #F2F4F8  alternating sections
- *  ink      #0E1B33  body text
- *  muted    #44506A  descriptions, small text
+ *  brand-ink         brand-coloured text and borders on surfaces
+ *  page     #FFFFFF  page background        surface  cards and panels
+ *  alt      #F2F4F8  alternating sections, subtle fills
+ *  ink      #0E1B33  body text              muted    #44506A descriptions
  *  link     #1F4C94  links and reference numbers
  *  danger   #B3261E  "หยุดก่อน", high risk
  *  caution  #7A4F00 on #FFF3D6  "ควรระวัง", "จำลอง" tag
  *  safe     #1A6340 on #E3F3EA  "ความเสี่ยงต่ำ", saved successfully
+ * Vision-test canvases stay white in every theme so results are comparable.
  */
 :root {
+  --c-chrome: 19 41 75;
   --c-brand: 19 41 75;
   --c-brand-hover: 30 61 111;
+  --c-brand-ink: 19 41 75;
   --c-page: 255 255 255;
+  --c-surface: 255 255 255;
   --c-alt: 242 244 248;
   --c-ink: 14 27 51;
   --c-ink-muted: 68 80 106;
@@ -39,16 +44,52 @@
   --c-caution-bg: 255 243 214;
   --c-safe: 26 99 64;
   --c-safe-bg: 227 243 234;
+  --c-on-chrome-bg: 255 255 255;
+  --c-on-chrome-fg: 19 41 75;
+  --shadow-card: 0 1px 2px rgb(14 27 51 / 0.05), 0 6px 16px -10px rgb(14 27 51 / 0.18);
+  --shadow-pop: 0 2px 4px rgb(14 27 51 / 0.06), 0 16px 32px -12px rgb(14 27 51 / 0.28);
   color-scheme: light;
 }
 
-/* High-contrast mode (coping workflow): darker text, solid borders. */
+/* Dark: for dim cabin lighting. Navy chrome is kept; surfaces step up in lightness. */
+:root[data-theme='dark'] {
+  --c-brand: 47 95 175;
+  --c-brand-hover: 60 110 194;
+  --c-brand-ink: 183 206 244;
+  --c-page: 9 17 31;
+  --c-surface: 16 27 45;
+  --c-alt: 23 36 58;
+  --c-ink: 230 236 245;
+  --c-ink-muted: 166 178 199;
+  --c-link: 143 180 240;
+  --c-line: 40 57 86;
+  --c-danger: 255 143 133;
+  --c-danger-bg: 58 22 20;
+  --c-caution: 245 199 107;
+  --c-caution-bg: 56 42 12;
+  --c-safe: 127 209 164;
+  --c-safe-bg: 14 50 35;
+  --c-on-chrome-bg: 226 234 246;
+  --c-on-chrome-fg: 13 27 50;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 20px -12px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 2px 6px rgb(0 0 0 / 0.4), 0 18px 36px -12px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+/* High-contrast mode (coping workflow): stronger text, solid borders. */
 :root[data-contrast='high'] {
   --c-ink: 0 0 0;
   --c-ink-muted: 22 28 40;
   --c-line: 14 27 51;
   --c-link: 10 52 128;
   --c-alt: 236 239 245;
+}
+:root[data-theme='dark'][data-contrast='high'] {
+  --c-ink: 255 255 255;
+  --c-ink-muted: 214 222 236;
+  --c-line: 150 170 205;
+  --c-link: 178 205 250;
+  --c-alt: 28 42 66;
 }
 :root[data-contrast='high'] .card,
 :root[data-contrast='high'] .field {
@@ -61,6 +102,21 @@ html {
 body {
   @apply bg-page text-ink font-sans antialiased;
   line-height: 1.65; /* Thai stacked vowels/tone marks need extra leading */
+  caret-color: rgb(var(--c-link));
+  scrollbar-color: rgb(var(--c-line)) transparent;
+}
+::selection {
+  background: rgb(var(--c-link) / 0.22);
+  color: rgb(var(--c-ink));
+}
+input,
+textarea,
+select {
+  accent-color: rgb(var(--c-brand));
+}
+/* Grid items may shrink below their content (prevents wide tables pushing cards off-screen). */
+.grid > * {
+  min-width: 0;
 }
 
 /* Visible focus for keyboard users, on light and navy surfaces. */
@@ -82,25 +138,41 @@ body {
 
 @layer components {
   .card {
-    @apply bg-page border border-line rounded-xl;
+    @apply bg-surface border border-line rounded-xl;
+    box-shadow: var(--shadow-card);
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-4 rounded-lg font-semibold text-[0.95rem] transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-4 rounded-lg font-semibold text-[0.95rem] select-none;
+    @apply transition-[background-color,border-color,color,transform,box-shadow] duration-150 ease-out active:translate-y-px;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0;
   }
   .btn-primary {
     @apply btn bg-brand text-white hover:bg-brand-hover;
+    box-shadow: 0 1px 2px rgb(14 27 51 / 0.18);
   }
   .btn-secondary {
-    @apply btn bg-page text-brand border border-brand/40 hover:bg-alt;
+    @apply btn bg-surface text-brand-ink border border-brand-ink/35 hover:border-brand-ink/60 hover:bg-alt;
   }
   .btn-ghost {
     @apply btn text-link hover:bg-alt;
   }
   .btn-danger {
-    @apply btn bg-page text-danger border border-danger/50 hover:bg-danger-bg;
+    @apply btn bg-surface text-danger border border-danger/50 hover:bg-danger-bg;
+  }
+  .btn-on-chrome {
+    @apply btn;
+    background: rgb(var(--c-on-chrome-bg));
+    color: rgb(var(--c-on-chrome-fg));
+  }
+  .btn-on-chrome:hover {
+    background: rgb(var(--c-on-chrome-bg) / 0.88);
+  }
+  .btn-outline-chrome {
+    @apply btn border border-white/45 text-white hover:bg-white/10;
   }
   .field {
-    @apply w-full min-h-[44px] rounded-lg border border-ink-muted/50 bg-page px-3 py-2 text-ink;
+    @apply w-full min-h-[44px] rounded-lg border border-ink-muted/50 bg-surface px-3 py-2 text-ink transition-colors duration-150;
+    @apply hover:border-ink-muted placeholder:text-ink-muted;
   }
   .label {
     @apply block text-sm font-semibold text-ink mb-1;

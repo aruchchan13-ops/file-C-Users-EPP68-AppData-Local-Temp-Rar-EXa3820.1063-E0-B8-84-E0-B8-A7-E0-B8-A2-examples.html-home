@@ -25,27 +25,27 @@ export function HomePage() {
 
   return (
     <div className="space-y-5">
-      <section className="on-brand -mx-4 -mt-6 bg-brand px-4 pb-6 pt-6 text-white sm:-mx-6 sm:px-6 lg:mx-0 lg:mt-0 lg:rounded-xl" aria-labelledby="home-title">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section className="on-brand -mx-4 -mt-6 bg-chrome px-4 pb-6 pt-6 text-white sm:-mx-6 sm:px-6 lg:mx-0 lg:mt-0 lg:rounded-xl lg:px-7 lg:pt-7 lg:shadow-card" aria-labelledby="home-title">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm text-white/80">
-              สถานะวันนี้ · Home Status {isDemo && <span className="ml-1 rounded bg-[#FFF3D6] px-1.5 py-0.5 text-xs font-semibold text-[#7A4F00]">ข้อมูลจำลอง</span>}
-            </p>
-            <h1 id="home-title" className="mt-1 text-3xl font-bold leading-tight">
-              วันภารกิจที่ {day}
+            <h1 id="home-title" className="text-3xl font-bold leading-tight sm:text-[2.125rem]">
+              <span className="sr-only">สถานะวันนี้: </span>วันภารกิจที่ <span className="num">{day}</span>
             </h1>
-            <p className="text-white/85">{longDate(dateOf(day))}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-white/80">
+              <span>{longDate(dateOf(day))}</span>
+              {isDemo && <SimulatedTag />}
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link to="/training/plan" className="btn bg-white text-brand hover:bg-alt">
+            <Link to="/training/plan" className="btn-on-chrome">
               <Icon name="plan" size={18} /> เริ่มแผนวันนี้ ({plan.totalMinutes.toFixed(1)} นาที)
             </Link>
-            <button type="button" className="btn border border-white/50 text-white hover:bg-white/10" onClick={start}>
+            <button type="button" className="btn-outline-chrome" onClick={start}>
               <Icon name="play" size={16} /> ทัวร์สาธิต
             </button>
           </div>
         </div>
-        <dl className="num mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <dl className="num mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-white/15 pt-5 sm:grid-cols-4 sm:divide-x sm:divide-white/15 [&>div]:sm:px-5 [&>div:first-child]:sm:pl-0">
           <div>
             <dt className="text-sm text-white/75">คะแนนวันนี้</dt>
             <dd className="text-2xl font-bold">{today?.composite == null ? '—' : pct(today.composite)}</dd>
@@ -121,7 +121,10 @@ export function HomePage() {
                 <li key={d} className={`num flex flex-col items-center rounded-lg border p-2 text-center ${sd ? 'border-caution bg-caution-bg' : 'border-line'}`}>
                   <span className="text-xs text-ink-muted">D{d}</span>
                   <span className="text-lg font-bold text-ink">{n}</span>
-                  <span className="text-[0.65rem] text-ink-muted">{sd ? '▲ วันมีอาการ' : 'ครั้ง'}</span>
+                  <span className={`inline-flex items-center gap-0.5 text-[0.68rem] leading-tight ${sd ? 'font-semibold text-caution' : 'text-ink-muted'}`}>
+                    {sd && <Icon name="triangle" size={10} />}
+                    {sd ? 'วันมีอาการ' : 'ครั้ง'}
+                  </span>
                 </li>
               );
             })}
@@ -145,7 +148,10 @@ export function HomePage() {
                 return (
                   <li key={k} className="rounded-lg border border-line p-2 text-sm">
                     <p className="text-ink-muted">{CM_META[k].en.split(' (')[0]}</p>
-                    <p className={`font-semibold ${a ? 'text-safe' : 'text-ink'}`}>{a === null ? 'ไม่ได้บันทึก' : a ? '✓ ตามเป้า' : '✕ ต่ำกว่าเป้า'}</p>
+                    <p className={`flex items-center gap-1 font-semibold ${a ? 'text-safe' : a === false ? 'text-danger' : 'text-ink-muted'}`}>
+                      {a !== null && <Icon name={a ? 'check' : 'close'} size={16} />}
+                      {a === null ? 'ไม่ได้บันทึก' : a ? 'ตามเป้า' : 'ต่ำกว่าเป้า'}
+                    </p>
                   </li>
                 );
               })}
@@ -167,8 +173,8 @@ export function HomePage() {
           <ul className="mt-3 space-y-1 text-sm">
             {plan.items.map((it) => (
               <li key={it.id} className="flex items-center gap-2">
-                <span aria-hidden className={it.done ? 'text-safe' : 'text-ink-muted'}>
-                  {it.done ? '✓' : '○'}
+                <span aria-hidden className={`inline-flex ${it.done ? 'text-safe' : 'text-ink-muted'}`}>
+                  <Icon name={it.done ? 'check' : 'circle'} size={16} />
                 </span>
                 <span className={it.done ? 'text-ink-muted line-through' : 'text-ink'}>{planLabel(it)}</span>
                 <span className="sr-only">{it.done ? 'เสร็จแล้ว' : 'ยังไม่ทำ'}</span>

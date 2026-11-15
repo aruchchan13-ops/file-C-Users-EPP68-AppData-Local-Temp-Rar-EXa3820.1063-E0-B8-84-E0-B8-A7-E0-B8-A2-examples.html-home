@@ -212,22 +212,29 @@ check('No console errors', relevant.length === 0, relevant.slice(0, 3).join(' | 
 await ctx.close();
 
 // 15. Mobile + tablet layouts
-for (const [label, device] of [
-  ['mobile', devices['iPhone 13']],
-  ['tablet', devices['iPad (gen 7)']],
+for (const [label, device, colorScheme] of [
+  ['mobile', devices['iPhone 13'], 'light'],
+  ['mobile-dark', devices['iPhone 13'], 'dark'],
+  ['tablet', devices['iPad (gen 7)'], 'light'],
 ]) {
-  const c = await browser.newContext({ ...device });
+  const c = await browser.newContext({ ...device, colorScheme });
   const p = await c.newPage();
   for (const hash of ['/', '/training', '/symptoms', '/trend', '/surgeon', '/countermeasures', '/training/amsler']) {
     await p.goto(`${BASE}#${hash}`);
     await p.waitForLoadState('networkidle');
     const overflow = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     if (overflow > 1) check(`${label} no horizontal scroll ${hash}`, false, `${overflow}px`);
+    // Element-level check: content clipped past the viewport edge (outside intentional scroll regions).
+    const clipped = await p.evaluate(
+      () => [...document.querySelectorAll('#main *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1 && !e.closest('[role=region],.overflow-x-auto,.overflow-auto')).length,
+    );
+    if (clipped) check(`${label} nothing clipped off-screen ${hash}`, false, `${clipped} elements`);
   }
   await p.goto(`${BASE}#/`);
   await p.waitForLoadState('networkidle');
   const bottomNav = await p.getByRole('navigation', { name: 'เมนูหลัก (มือถือ)' }).isVisible();
   check(`${label}: layout fits, primary nav visible`, label === 'tablet' ? true : bottomNav);
+  if (colorScheme === 'dark') check(`${label}: dark theme applied`, (await p.evaluate(() => document.documentElement.dataset.theme)) === 'dark');
   if (SHOTS) await p.screenshot({ path: `${SHOTS}/${label}-home.png` });
   await c.close();
 }

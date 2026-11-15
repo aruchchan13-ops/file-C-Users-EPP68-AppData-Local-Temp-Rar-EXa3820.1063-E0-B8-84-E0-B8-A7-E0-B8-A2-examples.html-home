@@ -4,6 +4,7 @@ import { useMission } from '../../hooks/useMission';
 import { useUi } from '../../hooks/useUi';
 import { CM_KEYS, CM_META, MIN_GROUP_DAYS, adherence, countermeasureInsights, deleteCountermeasure, isAdherent, upsertCountermeasure } from '../../services/countermeasureService';
 import { Card, EmptyState, Notice, PageHeader, SourceBadge, Stat } from '../../components/ui';
+import { Icon } from '../../components/layout/Icon';
 import { pct } from '../../utils/format';
 
 interface Draft {
@@ -181,7 +182,9 @@ export function CountermeasuresPage() {
                         const a = isAdherent(byDay.get(d), k);
                         return (
                           <td key={d} className="px-2 py-1.5">
-                            {a === null ? <span className="text-ink-muted">–</span> : a ? <span className="font-bold text-safe">✓</span> : <span className="font-bold text-danger">✕</span>}
+                            <span className="inline-flex justify-center">
+                              {a === null ? <Icon name="minus" size={16} className="text-ink-muted" /> : a ? <Icon name="check" size={18} className="text-safe" /> : <Icon name="close" size={16} className="text-danger" />}
+                            </span>
                             <span className="sr-only">{a === null ? 'ไม่ได้บันทึก' : a ? 'ตามเป้า' : 'ต่ำกว่าเป้า'}</span>
                           </td>
                         );
@@ -191,7 +194,12 @@ export function CountermeasuresPage() {
                 </tbody>
               </table>
             </div>
-            <p className="hint mt-2">✓ ตามเป้า · ✕ ต่ำกว่าเป้า · – ไม่ได้บันทึก (ไม่นับใน %) · เป้าหมายเป็นค่าเริ่มต้นสำหรับสาธิต ให้ทีมแพทย์กำหนด</p>
+            <p className="hint mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="inline-flex items-center gap-1"><Icon name="check" size={16} className="text-safe" /> ตามเป้า</span>
+              <span className="inline-flex items-center gap-1"><Icon name="close" size={14} className="text-danger" /> ต่ำกว่าเป้า</span>
+              <span className="inline-flex items-center gap-1"><Icon name="minus" size={14} /> ไม่ได้บันทึก (ไม่นับใน %)</span>
+              <span>เป้าหมายเป็นค่าเริ่มต้นสำหรับสาธิต ให้ทีมแพทย์กำหนด</span>
+            </p>
           </Card>
 
           <Card title="เปรียบเทียบคะแนนการมองเห็น: วันที่ทำ vs ไม่ได้ทำ" id="insights">

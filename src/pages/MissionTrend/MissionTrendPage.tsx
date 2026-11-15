@@ -7,7 +7,7 @@ import { adherence } from '../../services/countermeasureService';
 import { MEASUREMENT_META } from '../../services/measurementService';
 import { EXAM_DAYS } from '../../services/demoDataService';
 import { ChartFigure } from '../../components/charts/ChartFigure';
-import { CHART_COLORS, CategoryChart, VisionTrendChart, WeeklyBarChart } from '../../components/charts/Charts';
+import { CategoryChart, VisionTrendChart, WeeklyBarChart, useChartColors } from '../../components/charts/Charts';
 import { AlertStrip, AlertTransitionsList, ALERT_RULES_TEXT } from '../../components/alerts/AlertCard';
 import { Card, PageHeader, SimulatedTag, ThresholdNotice } from '../../components/ui';
 import { pct } from '../../utils/format';
@@ -32,6 +32,7 @@ export function MissionTrendPage() {
     });
   }, [symptoms, countermeasures, day]);
 
+  const CHART_COLORS = useChartColors();
   const last = series[series.length - 1];
   const early = Math.min(30, day);
 

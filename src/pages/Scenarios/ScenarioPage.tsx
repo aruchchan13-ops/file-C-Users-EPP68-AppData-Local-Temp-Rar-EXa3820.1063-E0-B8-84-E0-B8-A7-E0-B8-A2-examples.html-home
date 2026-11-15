@@ -68,9 +68,8 @@ export function ScenarioPage() {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">
         <div className="space-y-5">
-          <Card>
-            <p className="text-sm font-semibold uppercase tracking-wide text-link">เรื่องราวในภารกิจ</p>
-            <p className="mt-2 text-[1.05rem] text-ink">{scenario.story}</p>
+          <Card title="สถานการณ์" id="story">
+            <p className="max-w-[68ch] text-[1.05rem] leading-relaxed text-ink">{scenario.story}</p>
           </Card>
 
           <Card title={scenario.question} id="q">
@@ -84,7 +83,7 @@ export function ScenarioPage() {
                   return (
                     <label
                       key={c.id}
-                      className={`flex min-h-[44px] cursor-pointer items-start gap-3 rounded-lg border p-3 ${picked && !submitted ? 'border-brand bg-alt' : 'border-line'} ${tone}`}
+                      className={`flex min-h-[44px] cursor-pointer items-start gap-3 rounded-lg border p-3 ${picked && !submitted ? 'border-brand-ink bg-alt' : 'border-line'} ${tone}`}
                     >
                       <input type="radio" name="choice" className="mt-1 h-5 w-5 accent-[rgb(var(--c-brand))]" checked={picked} onChange={() => setChoiceId(c.id)} />
                       <span className="flex-1">
@@ -92,7 +91,8 @@ export function ScenarioPage() {
                         {reveal && (
                           <span className="mt-1 block text-sm">
                             <strong>
-                              {c.score === 100 ? '✓ แนวทางที่ดีที่สุด' : c.unsafe ? '✕ ไม่ปลอดภัย' : '△ ยังไม่ดีที่สุด'} ({c.unsafe ? 0 : c.score} คะแนน):
+                              <Icon name={c.score === 100 ? 'check' : c.unsafe ? 'close' : 'triangle'} size={14} className="mr-1 inline align-[-2px]" />
+                              {c.score === 100 ? 'แนวทางที่ดีที่สุด' : c.unsafe ? 'ไม่ปลอดภัย' : 'ยังไม่ดีที่สุด'} ({c.unsafe ? 0 : c.score} คะแนน):
                             </strong>{' '}
                             {c.feedback}
                           </span>

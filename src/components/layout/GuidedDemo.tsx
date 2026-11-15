@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMission } from '../../hooks/useMission';
 import { ALERT_META } from '../../services/alertService';
 import { AlertPill } from '../ui';
+import { Icon } from './Icon';
 
 /** ~2-minute guided demonstration (9 steps × ~13 s). */
 interface Step {
@@ -127,19 +128,16 @@ function Overlay({ index, onNext, onPrev, onClose }: { index: number; onNext: ()
       role="dialog"
       aria-modal="false"
       aria-labelledby="tour-title"
-      className="no-print fixed inset-x-3 bottom-20 z-50 max-h-[60vh] overflow-y-auto rounded-xl border-2 border-brand bg-page p-4 shadow-2xl sm:inset-x-auto sm:right-6 sm:w-[26rem] lg:bottom-6"
+      className="no-print fixed inset-x-3 bottom-20 z-50 max-h-[60vh] overflow-y-auto rounded-xl border border-line bg-surface p-4 shadow-pop ring-1 ring-brand-ink/20 sm:p-5 sm:inset-x-auto sm:right-6 sm:w-[26rem] lg:bottom-6"
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="num text-sm font-semibold text-link">
-          ทัวร์สาธิต · ขั้นตอน {index + 1}/{STEPS.length}
-        </p>
-        <button type="button" onClick={onClose} className="btn-ghost min-h-[40px] px-2 text-sm" aria-label="ปิดทัวร์สาธิต">
-          ปิด ✕
+      <div className="flex items-start justify-between gap-2">
+        <h2 id="tour-title" ref={headingRef} tabIndex={-1} className="pt-1.5 text-lg font-bold leading-snug text-ink">
+          {step.title}
+        </h2>
+        <button type="button" onClick={onClose} className="btn-ghost -mr-2 -mt-1 min-h-[40px] shrink-0 px-2 text-sm" aria-label="ปิดทัวร์สาธิต">
+          <Icon name="close" size={16} /> ปิด
         </button>
       </div>
-      <h2 id="tour-title" ref={headingRef} tabIndex={-1} className="text-lg font-bold text-ink">
-        {step.title}
-      </h2>
       <p className="mt-1 text-[0.95rem] text-ink">{step.body}</p>
       {step.showAlert && (
         <div className="mt-3 rounded-lg bg-alt p-3 text-sm">
@@ -154,8 +152,13 @@ function Overlay({ index, onNext, onPrev, onClose }: { index: number; onNext: ()
           </ul>
         </div>
       )}
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-alt" aria-hidden>
-        <div className="h-full bg-brand" style={{ width: `${((index + 1) / STEPS.length) * 100}%` }} />
+      <div className="mt-4 flex items-center gap-3">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-alt" aria-hidden>
+          <div className="h-full rounded-full bg-brand transition-[width] duration-200" style={{ width: `${((index + 1) / STEPS.length) * 100}%` }} />
+        </div>
+        <p className="num shrink-0 text-xs font-semibold text-ink-muted">
+          ทัวร์สาธิต · ขั้นตอน {index + 1}/{STEPS.length}
+        </p>
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <button type="button" className="btn-ghost text-sm" onClick={onClose}>

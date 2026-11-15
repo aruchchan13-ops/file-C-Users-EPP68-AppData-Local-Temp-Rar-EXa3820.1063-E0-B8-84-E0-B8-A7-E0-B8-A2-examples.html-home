@@ -5,8 +5,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: { DEFAULT: 'rgb(var(--c-brand) / <alpha-value>)', hover: 'rgb(var(--c-brand-hover) / <alpha-value>)' },
+        chrome: 'rgb(var(--c-chrome) / <alpha-value>)',
+        'on-chrome': { DEFAULT: 'rgb(var(--c-on-chrome-bg) / <alpha-value>)', fg: 'rgb(var(--c-on-chrome-fg) / <alpha-value>)' },
+        brand: {
+          DEFAULT: 'rgb(var(--c-brand) / <alpha-value>)',
+          hover: 'rgb(var(--c-brand-hover) / <alpha-value>)',
+          ink: 'rgb(var(--c-brand-ink) / <alpha-value>)',
+        },
         page: 'rgb(var(--c-page) / <alpha-value>)',
+        surface: 'rgb(var(--c-surface) / <alpha-value>)',
         alt: 'rgb(var(--c-alt) / <alpha-value>)',
         ink: { DEFAULT: 'rgb(var(--c-ink) / <alpha-value>)', muted: 'rgb(var(--c-ink-muted) / <alpha-value>)' },
         link: 'rgb(var(--c-link) / <alpha-value>)',
@@ -19,6 +26,7 @@ export default {
         sans: ['"IBM Plex Sans Thai"', 'system-ui', 'sans-serif'],
       },
       maxWidth: { content: '72rem' },
+      boxShadow: { card: 'var(--shadow-card)', pop: 'var(--shadow-pop)' },
     },
   },
   plugins: [],

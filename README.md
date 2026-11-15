@@ -126,11 +126,16 @@ src/
 
 ## Accessibility
 
+Light and dark themes (Settings → ธีม: system / light / dark; dark is for dim cabin
+lighting and is applied before first paint). Both are token swaps of the same system: navy
+chrome stays `#13294B`, and vision-test canvases stay white in every theme so results remain
+comparable.
+
 WCAG AA colour contrast (team palette), 44 px touch targets, IBM Plex Sans Thai bundled
 for offline use with Thai-friendly line height, keyboard navigation (skip link, roving
 focus on the Amsler grid, visible focus), semantic landmarks, accessible chart summaries
 and data tables, alerts never rely on colour alone, text-size and high-contrast modes.
-The axe-core WCAG 2 A/AA audit reports no violations on any page.
+The axe-core WCAG 2 A/AA audit reports no violations on any page in either theme.
 
 ## Assumptions
 

@@ -13,9 +13,9 @@ export function ScenarioList({ compact = false }: { compact?: boolean }) {
         <li key={scenario.id}>
           <Link
             to={`/training/scenarios/${scenario.id}`}
-            className="flex min-h-[56px] items-center gap-3 rounded-lg border border-line bg-page p-3 hover:border-brand hover:bg-alt"
+            className="flex min-h-[56px] items-center gap-3 rounded-lg border border-line bg-surface p-3 hover:border-brand-ink hover:bg-alt"
           >
-            <span aria-hidden className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-alt font-bold text-brand">
+            <span aria-hidden className="num flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-alt font-bold text-brand-ink">
               {i + 1}
             </span>
             <span className="min-w-0 flex-1">
